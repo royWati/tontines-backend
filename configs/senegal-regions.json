@@ -1,0 +1,266 @@
+[
+  {
+    "id": 1,
+    "region": "Dakar",
+    "departments": [
+      {
+        "id": 1,
+        "name": "Dakar"
+      },
+      {
+        "id": 2,
+        "name": "Guédiawaye"
+      },
+      {
+        "id": 3,
+        "name": "Pikine"
+      },
+      {
+        "id": 4,
+        "name": "Rufisque"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "region": "Diourbel",
+    "departments": [
+      {
+        "id": 1,
+        "name": "Bambey"
+      },
+      {
+        "id": 2,
+        "name": "Diourbel"
+      },
+      {
+        "id": 3,
+        "name": "Mbacké"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "region": "Fatick",
+    "departments": [
+      {
+        "id": 1,
+        "name": "Fatick"
+      },
+      {
+        "id": 2,
+        "name": "Foundiougne"
+      },
+      {
+        "id": 3,
+        "name": "Gossas"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "region": "Kaffrine",
+    "departments": [
+      {
+        "id": 1,
+        "name": "Birkilane"
+      },
+      {
+        "id": 2,
+        "name": "Kaffrine"
+      },
+      {
+        "id": 3,
+        "name": "Malem-Hodar"
+      },
+      {
+        "id": 4,
+        "name": "Kounghel"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "region": "Kaolack",
+    "departments": [
+      {
+        "id": 1,
+        "name": "Kaolack"
+      },
+      {
+        "id": 2,
+        "name": "Guinguinéo"
+      },
+      {
+        "id": 3,
+        "name": "Nioro du Rip"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "region": "Kédougou",
+    "departments": [
+      {
+        "id": 1,
+        "name": "Kédougou"
+      },
+      {
+        "id": 2,
+        "name": "Salemata"
+      },
+      {
+        "id": 3,
+        "name": "Saraya"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "region": "Kolda",
+    "departments": [
+      {
+        "id": 1,
+        "name": "Kolda"
+      },
+      {
+        "id": 2,
+        "name": "Vélingara"
+      },
+      {
+        "id": 3,
+        "name": "Médina Yoro Foulah"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "region": "Louga",
+    "departments": [
+      {
+        "id": 1,
+        "name": "Kébémer"
+      },
+      {
+        "id": 2,
+        "name": "Linguère"
+      },
+      {
+        "id": 3,
+        "name": "Louga"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "region": "Matam",
+    "departments": [
+      {
+        "id": 1,
+        "name": "Kanel"
+      },
+      {
+        "id": 2,
+        "name": "Matam"
+      },
+      {
+        "id": 3,
+        "name": "Ranérou"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "region": "Saint-Louis",
+    "departments": [
+      {
+        "id": 1,
+        "name": "Dagana"
+      },
+      {
+        "id": 2,
+        "name": "Podor"
+      },
+      {
+        "id": 3,
+        "name": "Saint-Louis"
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "region": "Sédhiou",
+    "departments": [
+      {
+        "id": 1,
+        "name": "Bounkiling"
+      },
+      {
+        "id": 2,
+        "name": "Goudomp"
+      },
+      {
+        "id": 3,
+        "name": "Sédhiou"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "region": "Tambacounda",
+    "departments": [
+      {
+        "id": 1,
+        "name": "Bakel"
+      },
+      {
+        "id": 2,
+        "name": "Koumpentoum"
+      },
+      {
+        "id": 3,
+        "name": "Tambacounda"
+      },
+      {
+        "id": 4,
+        "name": "Goudiry"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "region": "Thiès",
+    "departments": [
+      {
+        "id": 1,
+        "name": "M'bour"
+      },
+      {
+        "id": 2,
+        "name": "Thiès"
+      },
+      {
+        "id": 3,
+        "name": "Tivaouane"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "region": "Ziguinchor",
+    "departments": [
+      {
+        "id": 1,
+        "name": "Bignogna"
+      },
+      {
+        "id": 2,
+        "name": "Oussouye"
+      },
+      {
+        "id": 3,
+        "name": "Ziguinchor"
+      }
+    ]
+  }
+]

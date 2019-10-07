@@ -1,0 +1,71 @@
+{
+  "transactionTypes": [
+    {
+      "id": 1,
+      "name": "DEBIT"
+    },
+    {
+      "id": 2,
+      "name": "CREDIT"
+    }
+  ],
+  "accountModes": [
+    {
+      "mode": "ACTIVE",
+      "operationState": true
+    },
+    {
+      "mode": "DORMANT",
+      "operationState": false
+    },
+    {
+      "mode": "FROZEN",
+      "operationState": false
+    }
+
+  ],
+  "accountTypes":[
+    {
+      "accountName": "WALLET ACCOUNT",
+      "accountPrefix": "WA"
+    },
+    {
+      "accountName": "MEMBER GROUP ACCOUNT",
+      "accountPrefix": "CA"
+    },
+    {
+      "accountName": "MEMBER ACCOUNT",
+      "accountPrefix": "MA"
+    },
+    {
+      "accountName": "SERVICE ACCOUNT",
+      "accountPrefix": "SA"
+    },
+    {
+      "accountName": "GENERAL ACCOUNT",
+      "accountPrefix": "GA"
+    },
+    {
+      "accountName": "EXTERNAL ACCOUNT",
+      "accountPrefix": "EXA"
+    }
+  ],
+  "holdingAccounts": [
+    {
+      "id": 1,
+      "accountName": "WALLET_HOLDING_ACCOUNT",
+      "accountType": {
+        "id": 1
+      }
+    },
+    {
+      "id": 7,
+      "accountName": "BILLERS_HOLDING_ACCOUNT",
+      "accountType": {
+        "id": 5
+      }
+    }
+  ],
+  "serviceAccounts": [
+  ]
+}
