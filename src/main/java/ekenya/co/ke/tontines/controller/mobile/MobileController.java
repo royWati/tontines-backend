@@ -1,20 +1,16 @@
 package ekenya.co.ke.tontines.controller.mobile;
 
+import com.sun.corba.se.spi.ior.ObjectKey;
 import ekenya.co.ke.tontines.components.jwt.JwtTokenUtil;
 import ekenya.co.ke.tontines.dao.entitites.Contributions;
+import ekenya.co.ke.tontines.dao.entitites.ContributionsLog;
 import ekenya.co.ke.tontines.dao.entitites.Members;
-import ekenya.co.ke.tontines.dao.wrappers.JwtRequest;
-import ekenya.co.ke.tontines.dao.wrappers.JwtResponse;
-import ekenya.co.ke.tontines.dao.wrappers.PasswordUpdater;
+import ekenya.co.ke.tontines.dao.wrappers.*;
 import ekenya.co.ke.tontines.dao.wrappers.accoutingdao.RecordBalanceWrapper;
-import ekenya.co.ke.tontines.dao.wrappers.membergroups.CreateMemberGroupWrapper;
-import ekenya.co.ke.tontines.dao.wrappers.membergroups.LeaveGroupWrapper;
-import ekenya.co.ke.tontines.dao.wrappers.membergroups.MemberDetails;
-import ekenya.co.ke.tontines.services.EntityManagementService;
-import ekenya.co.ke.tontines.services.EntityManagementServiceV2;
-import ekenya.co.ke.tontines.services.EntityServicesRequirementsV2;
-import ekenya.co.ke.tontines.services.JwtUserDetailsService;
+import ekenya.co.ke.tontines.dao.wrappers.membergroups.*;
+import ekenya.co.ke.tontines.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -22,12 +18,23 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/mobile")
 public class MobileController {
+
+    private final static Logger logger = Logger.getLogger(MobileController.class.getName());
+
     @Autowired
     private EntityManagementService entityManagementService;
 
@@ -54,15 +61,25 @@ public class MobileController {
     public Object updatePassword(@RequestBody PasswordUpdater passwordUpdater){
         return entityManagementService.UPDATE_MEMBER_PASSWORD(passwordUpdater);
     }
-
+    @PostMapping("/member/verify-otp")
+    public Object verifyOtp(@RequestBody VerifyOtpWrapper wrapper){
+        return entityManagementService.VERIFY_OTP(wrapper);
+    }
     @PostMapping("/authenticate")
-    public ResponseEntity authenticateUserDetails(@RequestBody JwtRequest jwtRequest) throws Exception {
+    public Object authenticateUserDetails(@RequestBody JwtRequest jwtRequest) throws Exception {
 
         authenticate(jwtRequest.getUsername(), jwtRequest.getPassword());
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(jwtRequest.getUsername());
         final String token = jwtTokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(token));
+
+        Members m = entityManagementService.getMemberDetails(jwtRequest.getUsername());
+
+        MobileLoginResponse mobileLoginResponse = new MobileLoginResponse();
+        mobileLoginResponse.setAccess_token(new JwtResponse(token));
+        mobileLoginResponse.setUserDetails(m);
+
+        return new UniversalResponse(new Response(200,"token"),mobileLoginResponse);
     }
 
     @PostMapping("/member/details/{id}")
@@ -76,9 +93,35 @@ public class MobileController {
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
+            throw new Exception("INVALID_CREDENTIALS 56", e);
         }
     }
+
+    @PostMapping("/member/groups")
+    public Object getAllGroupsForMember(@RequestBody StatementGetWrapper statementGetWrapper){
+        return entityManagementServiceV2.GET_GROUP_FOR_MEMBER(statementGetWrapper);
+    }
+    @PostMapping("/member/groups/invites")
+    public Object getAllGroupsForMemberInvites(@RequestBody StatementGetWrapper statementGetWrapper){
+        return entityManagementServiceV2.GET_GROUP_FOR_MEMBER_INVITES(statementGetWrapper);
+    }
+
+    @PostMapping("/member/groups/decline-invite")
+    public Object declineGroupInvite(@RequestBody AcceptInviteWrapper acceptInviteWrapper){
+        return entityManagementServiceV2.DECLINE_GROUP_INVITE(acceptInviteWrapper);
+    }
+
+    @PostMapping("/member/groups/add-role")
+    public Object addMemberRole(@RequestBody AddRoleWrapper addRoleWrapper){
+        return entityManagementServiceV2.ADD_MEMBER_ROLE(addRoleWrapper);
+    }
+
+    @PostMapping("/member/groups/accept-invite")
+    public Object acceptGroupInvite(@RequestBody List<AcceptInviteWrapper> inviteWrapper){
+        return entityManagementServiceV2.ACCEPT_GROUP_INVITE(inviteWrapper);
+    }
+
+
 
     @PostMapping("/group/create")
     public Object createObject(@RequestBody CreateMemberGroupWrapper createMemberGroupWrapper){
@@ -90,10 +133,11 @@ public class MobileController {
         return entityManagementService.VIEW_MEMBER_GROUP(id);
     }
 
-    @PostMapping("/group/members/{id}")
-    public Object findGroupMembers(@PathVariable long id,
-                                   @RequestParam int page, @RequestParam int size){
-        return entityManagementService.GET_ALL_MEMBERS_IN_GROUP(id, page, size);
+    @PostMapping("/group/members")
+    public Object findGroupMembers(@RequestBody StatementGetWrapper wrapper){
+
+        return entityManagementService.GET_ALL_MEMBERS_IN_GROUP(wrapper.getId(), wrapper.getPage(),
+                wrapper.getSize());
     }
     // TODO
     @PostMapping("/group/add-members/{id}")
@@ -114,8 +158,86 @@ public class MobileController {
         return entityManagementService.MEMBER_LEAVE_GROUP(leaveGroup);
     }
 
+    @PostMapping(value = "/group/upload-documents",consumes ="multipart/form-data")
+    public Object uploadGroupDocuments(@RequestParam("files")MultipartFile[] files ,
+                                       @RequestParam("groupId")String id, HttpServletRequest request){
+
+        logger.info(request.getRequestURI());
+        logger.info(request.getContentType());
+        logger.info("group id --"+id);
+        logger.info("files --"+files);
+        logger.info("files size--"+files.length);
+
+
+      Enumeration<String> En = request.getParameterNames();
+
+     while (En.hasMoreElements()){
+         logger.info("parameter name---"+ En.nextElement());
+     }
+
+
+     List<Part> partList = new ArrayList<>();
+
+        try {
+            for (Part p : request.getParts()){
+
+                if (p.getSubmittedFileName() != null){
+                    partList.add(p);
+                }
+                logger.info("submitted file name--"+p.getSubmittedFileName());
+                p.getSize();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ServletException e) {
+            e.printStackTrace();
+        }
+
+        logger.info("total parts created..."+partList.size());
+
+        return entityManagementServiceV2.UPLOAD_GROUP_DOCUMENTS(partList,Long.parseLong(id));
+    }
+
+    @PostMapping("/group/roles")
+    public Object getGroupMemberRoles(){
+        return entityManagementService.GET_GROUP_ROLES();
+    }
     @PostMapping("/group/link-external-account")
     public Object linkExternalGroupAccount(@RequestBody RecordBalanceWrapper recordBalanceWrapper){
         return entityManagementServiceV2.RECORD_EXTERNAL_ACCOUNT(recordBalanceWrapper);
     }
+
+    @PostMapping("/group/group-external-accounts")
+    public Object getExternalGroupAccounts(@RequestBody StatementGetWrapper wrapper){
+        return entityManagementServiceV2.GET_GROUP_EXTERNAL_ACCOUNTS(wrapper);
+    }
+
+    @PostMapping("/contribution/get-sources")
+    public Object getContributionSources(){
+        return entityManagementServiceV2.GET_CONTRIBUTION_SOURCES();
+    }
+
+    @PostMapping("/contribution/make-contribution")
+    public Object makeContribution(@RequestBody ContributionsLog contributionsLog){
+        return entityManagementServiceV2.MAKE_CONTRIBUTION(contributionsLog);
+    }
+
+    @PostMapping("/contributions/statements")
+    public Object contributionStatements(@RequestBody StatementGetWrapper wrapper){
+        return entityManagementServiceV2.GET_CONTRIBUTION_STATEMENTS(wrapper);
+    }
+    @PostMapping("/group/statements")
+    public Object groupStatements(@RequestBody StatementGetWrapper wrapper){
+        return entityManagementServiceV2.GET_GROUP_STATEMENTS(wrapper);
+    }
+    @PostMapping("/record-statements")
+    public Object recordExpenditures(){
+        return null;
+    }
+    @PostMapping("/accounts/external-account-types")
+    public Object getExternalAccountTypes(){
+        return entityManagementServiceV2.GET_EXTERNAL_ACCOUNT_TYPES();
+    }
+
+
 }

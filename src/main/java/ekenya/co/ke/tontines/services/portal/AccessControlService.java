@@ -14,4 +14,10 @@ public interface AccessControlService {
     UniversalResponse ADD_PRIVILEGE_TO_ROLE(List<Privileges> privilegesList, long roleId);
     UniversalResponse CREATE_SYSTEM_USER(SystemUsers systemUsers);
     UniversalResponse ADD_ROLES_TO_SYSTEM_USER(List<Roles> rolesList,long id);
+
+    UniversalResponse VIEW_PRIVILEGES();
+
+    UniversalResponse VIEW_ROLES();
+
+    UniversalResponse VIEW_SYSTEM_USERS(int page,int size);
 }

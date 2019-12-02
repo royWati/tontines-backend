@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://iveri.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://iveri.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+<wsdl:types>
+<s:schema elementFormDefault="qualified" targetNamespace="http://iveri.com/">
+<s:element name="Execute">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="validateRequest" type="s:boolean" />
+<s:element minOccurs="0" maxOccurs="1" name="protocol" type="s:string" />
+<s:element minOccurs="0" maxOccurs="1" name="protocolVersion" type="s:string" />
+<s:element minOccurs="0" maxOccurs="1" name="request" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="ExecuteResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="0" maxOccurs="1" name="ExecuteResult" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="GenerateCertificateID">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="0" maxOccurs="1" name="billingDetailsID" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="GenerateCertificateIDResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="0" maxOccurs="1" name="GenerateCertificateIDResult" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="RenewCertificateID">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="0" maxOccurs="1" name="billingDetailsID" type="s:string" />
+<s:element minOccurs="0" maxOccurs="1" name="certificateID" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="RenewCertificateIDResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="0" maxOccurs="1" name="RenewCertificateIDResult" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="SumitCertificateRequest">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="0" maxOccurs="1" name="certificateID" type="s:string" />
+<s:element minOccurs="0" maxOccurs="1" name="certificateSigningRequest" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="SumitCertificateRequestResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="0" maxOccurs="1" name="SumitCertificateRequestResult" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="GetCertificate">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="0" maxOccurs="1" name="certificateID" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="GetCertificateResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="0" maxOccurs="1" name="GetCertificateResult" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="GetPinBlock">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="0" maxOccurs="1" name="mode" type="s:string" />
+<s:element minOccurs="0" maxOccurs="1" name="pan" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="expiryMonth" type="s:int" />
+<s:element minOccurs="1" maxOccurs="1" name="expiryYear" type="s:int" />
+<s:element minOccurs="0" maxOccurs="1" name="pin" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="GetPinBlockResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="0" maxOccurs="1" name="GetPinBlockResult" type="tns:PinBlockData" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:complexType name="PinBlockData">
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="ResultStatusCode" type="s:int" />
+<s:element minOccurs="0" maxOccurs="1" name="ResultDescription" type="s:string" />
+<s:element minOccurs="0" maxOccurs="1" name="DeviceSerialNumber" type="s:string" />
+<s:element minOccurs="0" maxOccurs="1" name="DeviceMake" type="s:string" />
+<s:element minOccurs="0" maxOccurs="1" name="KeySerialNumber" type="s:string" />
+<s:element minOccurs="0" maxOccurs="1" name="PinBlock" type="s:string" />
+<s:element minOccurs="0" maxOccurs="1" name="EncryptedTrack2" type="s:string" />
+<s:element minOccurs="0" maxOccurs="1" name="DottedPAN" type="s:string" />
+</s:sequence>
+</s:complexType>
+<s:element name="UploadFile">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="0" maxOccurs="1" name="fileServiceCommand" type="s:string" />
+<s:element minOccurs="0" maxOccurs="1" name="fileData" type="s:base64Binary" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="UploadFileResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="0" maxOccurs="1" name="UploadFileResult" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="IsDataAvailable">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="0" maxOccurs="1" name="fileServiceCommand" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="IsDataAvailableResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="0" maxOccurs="1" name="IsDataAvailableResult" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="DownloadFile">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="0" maxOccurs="1" name="fileServiceCommand" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="DownloadFileResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="0" maxOccurs="1" name="DownloadFileResult" type="s:base64Binary" />
+</s:sequence>
+</s:complexType>
+</s:element>
+</s:schema>
+</wsdl:types>
+<wsdl:message name="ExecuteSoapIn">
+<wsdl:part name="parameters" element="tns:Execute" />
+</wsdl:message>
+<wsdl:message name="ExecuteSoapOut">
+<wsdl:part name="parameters" element="tns:ExecuteResponse" />
+</wsdl:message>
+<wsdl:message name="GenerateCertificateIDSoapIn">
+<wsdl:part name="parameters" element="tns:GenerateCertificateID" />
+</wsdl:message>
+<wsdl:message name="GenerateCertificateIDSoapOut">
+<wsdl:part name="parameters" element="tns:GenerateCertificateIDResponse" />
+</wsdl:message>
+<wsdl:message name="RenewCertificateIDSoapIn">
+<wsdl:part name="parameters" element="tns:RenewCertificateID" />
+</wsdl:message>
+<wsdl:message name="RenewCertificateIDSoapOut">
+<wsdl:part name="parameters" element="tns:RenewCertificateIDResponse" />
+</wsdl:message>
+<wsdl:message name="SumitCertificateRequestSoapIn">
+<wsdl:part name="parameters" element="tns:SumitCertificateRequest" />
+</wsdl:message>
+<wsdl:message name="SumitCertificateRequestSoapOut">
+<wsdl:part name="parameters" element="tns:SumitCertificateRequestResponse" />
+</wsdl:message>
+<wsdl:message name="GetCertificateSoapIn">
+<wsdl:part name="parameters" element="tns:GetCertificate" />
+</wsdl:message>
+<wsdl:message name="GetCertificateSoapOut">
+<wsdl:part name="parameters" element="tns:GetCertificateResponse" />
+</wsdl:message>
+<wsdl:message name="GetPinBlockSoapIn">
+<wsdl:part name="parameters" element="tns:GetPinBlock" />
+</wsdl:message>
+<wsdl:message name="GetPinBlockSoapOut">
+<wsdl:part name="parameters" element="tns:GetPinBlockResponse" />
+</wsdl:message>
+<wsdl:message name="UploadFileSoapIn">
+<wsdl:part name="parameters" element="tns:UploadFile" />
+</wsdl:message>
+<wsdl:message name="UploadFileSoapOut">
+<wsdl:part name="parameters" element="tns:UploadFileResponse" />
+</wsdl:message>
+<wsdl:message name="IsDataAvailableSoapIn">
+<wsdl:part name="parameters" element="tns:IsDataAvailable" />
+</wsdl:message>
+<wsdl:message name="IsDataAvailableSoapOut">
+<wsdl:part name="parameters" element="tns:IsDataAvailableResponse" />
+</wsdl:message>
+<wsdl:message name="DownloadFileSoapIn">
+<wsdl:part name="parameters" element="tns:DownloadFile" />
+</wsdl:message>
+<wsdl:message name="DownloadFileSoapOut">
+<wsdl:part name="parameters" element="tns:DownloadFileResponse" />
+</wsdl:message>
+<wsdl:portType name="iVeriServiceSoap">
+<wsdl:operation name="Execute">
+<wsdl:input message="tns:ExecuteSoapIn" />
+<wsdl:output message="tns:ExecuteSoapOut" />
+</wsdl:operation>
+<wsdl:operation name="GenerateCertificateID">
+<wsdl:input message="tns:GenerateCertificateIDSoapIn" />
+<wsdl:output message="tns:GenerateCertificateIDSoapOut" />
+</wsdl:operation>
+<wsdl:operation name="RenewCertificateID">
+<wsdl:input message="tns:RenewCertificateIDSoapIn" />
+<wsdl:output message="tns:RenewCertificateIDSoapOut" />
+</wsdl:operation>
+<wsdl:operation name="SumitCertificateRequest">
+<wsdl:input message="tns:SumitCertificateRequestSoapIn" />
+<wsdl:output message="tns:SumitCertificateRequestSoapOut" />
+</wsdl:operation>
+<wsdl:operation name="GetCertificate">
+<wsdl:input message="tns:GetCertificateSoapIn" />
+<wsdl:output message="tns:GetCertificateSoapOut" />
+</wsdl:operation>
+<wsdl:operation name="GetPinBlock">
+<wsdl:input message="tns:GetPinBlockSoapIn" />
+<wsdl:output message="tns:GetPinBlockSoapOut" />
+</wsdl:operation>
+<wsdl:operation name="UploadFile">
+<wsdl:input message="tns:UploadFileSoapIn" />
+<wsdl:output message="tns:UploadFileSoapOut" />
+</wsdl:operation>
+<wsdl:operation name="IsDataAvailable">
+<wsdl:input message="tns:IsDataAvailableSoapIn" />
+<wsdl:output message="tns:IsDataAvailableSoapOut" />
+</wsdl:operation>
+<wsdl:operation name="DownloadFile">
+<wsdl:input message="tns:DownloadFileSoapIn" />
+<wsdl:output message="tns:DownloadFileSoapOut" />
+</wsdl:operation>
+</wsdl:portType>
+<wsdl:binding name="iVeriServiceSoap" type="tns:iVeriServiceSoap">
+<soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+<wsdl:operation name="Execute">
+<soap:operation soapAction="http://iveri.com/Execute" style="document" />
+<wsdl:input>
+<soap:body use="literal" />
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal" />
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="GenerateCertificateID">
+<soap:operation soapAction="http://iveri.com/GenerateCertificateID" style="document" />
+<wsdl:input>
+<soap:body use="literal" />
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal" />
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="RenewCertificateID">
+<soap:operation soapAction="http://iveri.com/RenewCertificateID" style="document" />
+<wsdl:input>
+<soap:body use="literal" />
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal" />
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="SumitCertificateRequest">
+<soap:operation soapAction="http://iveri.com/SumitCertificateRequest" style="document" />
+<wsdl:input>
+<soap:body use="literal" />
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal" />
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="GetCertificate">
+<soap:operation soapAction="http://iveri.com/GetCertificate" style="document" />
+<wsdl:input>
+<soap:body use="literal" />
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal" />
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="GetPinBlock">
+<soap:operation soapAction="http://iveri.com/GetPinBlock" style="document" />
+<wsdl:input>
+<soap:body use="literal" />
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal" />
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="UploadFile">
+<soap:operation soapAction="http://iveri.com/UploadFile" style="document" />
+<wsdl:input>
+<soap:body use="literal" />
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal" />
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="IsDataAvailable">
+<soap:operation soapAction="http://iveri.com/IsDataAvailable" style="document" />
+<wsdl:input>
+<soap:body use="literal" />
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal" />
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="DownloadFile">
+<soap:operation soapAction="http://iveri.com/DownloadFile" style="document" />
+<wsdl:input>
+<soap:body use="literal" />
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal" />
+</wsdl:output>
+</wsdl:operation>
+</wsdl:binding>
+<wsdl:binding name="iVeriServiceSoap12" type="tns:iVeriServiceSoap">
+<soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+<wsdl:operation name="Execute">
+<soap12:operation soapAction="http://iveri.com/Execute" style="document" />
+<wsdl:input>
+<soap12:body use="literal" />
+</wsdl:input>
+<wsdl:output>
+<soap12:body use="literal" />
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="GenerateCertificateID">
+<soap12:operation soapAction="http://iveri.com/GenerateCertificateID" style="document" />
+<wsdl:input>
+<soap12:body use="literal" />
+</wsdl:input>
+<wsdl:output>
+<soap12:body use="literal" />
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="RenewCertificateID">
+<soap12:operation soapAction="http://iveri.com/RenewCertificateID" style="document" />
+<wsdl:input>
+<soap12:body use="literal" />
+</wsdl:input>
+<wsdl:output>
+<soap12:body use="literal" />
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="SumitCertificateRequest">
+<soap12:operation soapAction="http://iveri.com/SumitCertificateRequest" style="document" />
+<wsdl:input>
+<soap12:body use="literal" />
+</wsdl:input>
+<wsdl:output>
+<soap12:body use="literal" />
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="GetCertificate">
+<soap12:operation soapAction="http://iveri.com/GetCertificate" style="document" />
+<wsdl:input>
+<soap12:body use="literal" />
+</wsdl:input>
+<wsdl:output>
+<soap12:body use="literal" />
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="GetPinBlock">
+<soap12:operation soapAction="http://iveri.com/GetPinBlock" style="document" />
+<wsdl:input>
+<soap12:body use="literal" />
+</wsdl:input>
+<wsdl:output>
+<soap12:body use="literal" />
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="UploadFile">
+<soap12:operation soapAction="http://iveri.com/UploadFile" style="document" />
+<wsdl:input>
+<soap12:body use="literal" />
+</wsdl:input>
+<wsdl:output>
+<soap12:body use="literal" />
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="IsDataAvailable">
+<soap12:operation soapAction="http://iveri.com/IsDataAvailable" style="document" />
+<wsdl:input>
+<soap12:body use="literal" />
+</wsdl:input>
+<wsdl:output>
+<soap12:body use="literal" />
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="DownloadFile">
+<soap12:operation soapAction="http://iveri.com/DownloadFile" style="document" />
+<wsdl:input>
+<soap12:body use="literal" />
+</wsdl:input>
+<wsdl:output>
+<soap12:body use="literal" />
+</wsdl:output>
+</wsdl:operation>
+</wsdl:binding>
+<wsdl:service name="iVeriService">
+<wsdl:port name="iVeriServiceSoap" binding="tns:iVeriServiceSoap">
+<soap:address location="https://portal.host.iveri.com/iVeriWebService/Service.asmx" />
+</wsdl:port>
+<wsdl:port name="iVeriServiceSoap12" binding="tns:iVeriServiceSoap12">
+<soap12:address location="https://portal.host.iveri.com/iVeriWebService/Service.asmx" />
+</wsdl:port>
+</wsdl:service>
+</wsdl:definitions>

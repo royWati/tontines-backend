@@ -28,4 +28,22 @@ public class MemberAndGroupLink extends BaseEntity{
     private Members member;
     private boolean hasAcceptedInvite;
 
+    @ManyToOne
+    @JoinColumn(name = "member_role",nullable = false)
+    private MemberRoles memberRole;
+
+    private boolean declinedInvite;
+
+
+    public MemberAndGroupLink(MemberGroups memberGroup, boolean hasAcceptedInvite) {
+        this.memberGroup = memberGroup;
+        this.hasAcceptedInvite = hasAcceptedInvite;
+    }
+
+    @PrePersist
+    public void addData(){
+        MemberRoles roles = new MemberRoles();
+        roles.setId(3);
+        this.memberRole = roles;
+    }
 }

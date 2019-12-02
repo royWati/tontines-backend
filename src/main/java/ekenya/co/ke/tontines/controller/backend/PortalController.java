@@ -4,11 +4,20 @@ import ekenya.co.ke.tontines.components.jwt.JwtTokenUtil;
 import ekenya.co.ke.tontines.dao.entitites.portal.Privileges;
 import ekenya.co.ke.tontines.dao.entitites.portal.Roles;
 import ekenya.co.ke.tontines.dao.entitites.portal.SystemUsers;
+import ekenya.co.ke.tontines.dao.repositories.portal.SystemUserRepository;
 import ekenya.co.ke.tontines.dao.wrappers.JwtRequest;
 import ekenya.co.ke.tontines.dao.wrappers.JwtResponse;
 import ekenya.co.ke.tontines.services.portal.AccessControlService;
 import ekenya.co.ke.tontines.services.portal.PortalAuthentification;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -32,14 +41,35 @@ public class PortalController {
     @Autowired
     private AccessControlService accessControlService;
 
-    @PostMapping("/authenticate")
-    public ResponseEntity authenticateUserDetails(@RequestBody JwtRequest jwtRequest) throws Exception {
 
-  //      authenticate(jwtRequest.getUsername(), jwtRequest.getPassword());
+    @Autowired @Lazy
+    private SystemUserRepository systemUserRepository;
+    @PostMapping("/authenticate")
+    public Object authenticateUserDetails(@RequestBody JwtRequest jwtRequest) throws Exception {
+
+        authenticate(jwtRequest.getUsername(), jwtRequest.getPassword());
         final UserDetails userDetails = portalAuthentification
                 .loadUserByUsername(jwtRequest.getUsername());
+
+        SystemUsers systemUsers = portalAuthentification.getUserDetails(jwtRequest.getUsername());
+        HoldUserDetails holdUserDetails = new HoldUserDetails();
+
+
+    //    authenticate(jwtRequest.getUsername(),jwtRequest.getPassword());
         final String token = jwtTokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(token));
+        holdUserDetails.setAccessToken(token);
+        holdUserDetails.setUserDetails(systemUsers);
+
+        return holdUserDetails;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    class HoldUserDetails{
+        private String accessToken;
+        private SystemUsers userDetails;
     }
 
     private void authenticate(String username, String password) throws Exception {
@@ -70,6 +100,24 @@ public class PortalController {
         return accessControlService.CREATE_PRIVILEGE(privileges);
     }
 
+    @PostMapping("/view/privileges")
+    public Object viewPrivileges(){
+        return accessControlService.VIEW_PRIVILEGES();
+    }
+    @PostMapping("/view/roles")
+    public Object viewRoles(){
+        return accessControlService.VIEW_ROLES();
+    }
+    @PostMapping("/view/system-users")
+    public Object viewSystemUsers(@RequestParam int page , @RequestParam int size){
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<SystemUsers> systemUsersPage = systemUserRepository.findAllBySoftDelete(false,pageable);
+      //  return accessControlService.VIEW_SYSTEM_USERS(page,size);
+        return systemUsersPage;
+    }
+
     // add privilege to role
     @PostMapping("/add-privilege/{id}")
     public Object addPrivilegeToRole(@RequestBody List<Privileges> privileges,@PathVariable long id){
@@ -81,4 +129,6 @@ public class PortalController {
     public Object createRole(@RequestBody Roles roles){
         return  accessControlService.CREATE_ROLE(roles);
     }
+
+
 }

@@ -13,11 +13,15 @@ import ekenya.co.ke.tontines.services.accounting.AccountingService;
 import ekenya.co.ke.tontines.services.accounting.AccountingServiceImpl;
 import org.apache.catalina.LifecycleState;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.Member;
 import java.util.ArrayList;
@@ -37,6 +41,9 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 
     @Autowired
     private AccountingService accountingService;
+
+    @Value("${app-configs.sms-url}")
+    public String smsUrl;
     /**
      *
      * @param members
@@ -125,8 +132,38 @@ public class EntityManagementServiceImpl implements EntityManagementService {
     }
 
     @Override
-    public UniversalResponse CREATE_MEMBERGROUP(CreateMemberGroupWrapper createMemberGroupWrapper) {
+    public UniversalResponse VERIFY_OTP(VerifyOtpWrapper verifyOtpWrapper) {
 
+        Members m = new Members();
+        m.setId(verifyOtpWrapper.getMemberId());
+        String otp = String.valueOf(verifyOtpWrapper.getOtp());
+
+        List<Otp> otpList = entityServicesRequirementsV1.findOtp(otp,m);
+
+        if (otpList.size() > 0){
+
+            List<Members> membersList = entityServicesRequirementsV1.findMember(verifyOtpWrapper.getMemberId());
+
+            Members member = membersList.get(0);
+
+            member.setPendingRegistrationStatus(false);
+
+            entityServicesRequirementsV1.createMember(member);
+
+            return new UniversalResponse(new Response(200,"otp verified"));
+        }else{
+            return new UniversalResponse(new Response(404,"opt not found"));
+        }
+
+    }
+
+    @Override
+    public Members getMemberDetails(String phoneNumber) {
+        return entityServicesRequirementsV1.searchPhoneNumber(phoneNumber).get(0);
+    }
+
+    @Override
+    public UniversalResponse CREATE_MEMBERGROUP(CreateMemberGroupWrapper createMemberGroupWrapper) {
 
         logger.info(objectMapperConverter(createMemberGroupWrapper));
         System.out.println("awesome...");
@@ -146,27 +183,12 @@ public class EntityManagementServiceImpl implements EntityManagementService {
         MemberGroups mg = entityServicesRequirementsV2.createMemberGroup(memberGroups);
 
         membersList.forEach(members -> {
-
-
-            LINK_MEMBER_TO_GROUP(members,mg);
-
-
-//            List<MemberGroupDetails> memberGroupDetails = entityServicesRequirementsV1.createMemberGroup(
-//                    members.getMemberGroups()
-//            );
-//
-//            MemberGroupDetails d = new MemberGroupDetails();
-//            d.setActive(true);
-//            d.setGroupId(mg.getId());
-//
-//            memberGroupDetails.add(d);
-//
-//            String strMemberGroups = objectMapperConverter(memberGroupDetails);
-//
-//            members.setMemberGroups(strMemberGroups);
-
-   //         entityServicesRequirementsV1.createMember(members);
+            LINK_MEMBER_TO_GROUP(members,mg,false);
         });
+
+        // add creator to link
+        Members creator = createMemberGroupWrapper.getMemberGroups().getCreator();
+        LINK_MEMBER_TO_GROUP(creator,mg,true);
 
 
         AccountType type = accountingService.findAccountType("CA").get(0);
@@ -239,12 +261,19 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 
     // TODO :: validate where the user already belongs to the the group before adding the user to the group
     @Override
-    public void LINK_MEMBER_TO_GROUP(Members members, MemberGroups memberGroups) {
+    public void LINK_MEMBER_TO_GROUP(Members members, MemberGroups memberGroups,boolean isCreator) {
         MemberAndGroupLink memberAndGroupLink = new MemberAndGroupLink();
 
         memberAndGroupLink.setMember(members);
         memberAndGroupLink.setMemberGroup(memberGroups);
         memberAndGroupLink.setHasAcceptedInvite(false);
+
+        if (isCreator){
+            memberAndGroupLink.setHasAcceptedInvite(true);
+            MemberRoles roles = new MemberRoles();
+            roles.setId(4);
+            memberAndGroupLink.setMemberRole(roles);
+        }
 
         entityServicesRequirementsV2.addMemberGroupLink(memberAndGroupLink);
     }
@@ -277,9 +306,24 @@ public class EntityManagementServiceImpl implements EntityManagementService {
     @Override
     public void SEND_OTP(Otp otp) {
 
-        String code = otp.getMembers().getCountyCode();
+        String code = otp.getMembers().getCountyCode().replaceAll("[\\s+&,-]","");
         String phone =otp.getMembers().getPhoneNumber();
         String msisdn = new StringBuilder().append(code).append(phone).toString();
+
+        SmsRequestBody smsRequestBody = new SmsRequestBody();
+        smsRequestBody.setTransactionID("");
+        smsRequestBody.setTo(msisdn);
+        smsRequestBody.setMessage(otp.getOtpValue());
+        smsRequestBody.setFrom("ECLECTICS");
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpEntity<SmsRequestBody> entity = new HttpEntity<>(smsRequestBody);
+
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(smsUrl,entity,String.class);
+
+        logger.info("sms request body..."+responseEntity.getBody());
+
         System.out.println("otp request recieved..."+msisdn);
     }
 
@@ -327,7 +371,7 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 
         if (list.size() > 0 ){
             MemberGroups m = list.get(0);
-            membersList.forEach(members -> LINK_MEMBER_TO_GROUP(members,m));
+            membersList.forEach(members -> LINK_MEMBER_TO_GROUP(members,m,false));
 
             return new UniversalResponse(new Response(200,"members added successfully"));
         }else{
@@ -401,4 +445,15 @@ public class EntityManagementServiceImpl implements EntityManagementService {
         }
 
     }
+
+    @Override
+    public UniversalResponse GET_GROUP_ROLES() {
+
+        List<MemberRoles> rolesList = entityServicesRequirementsV2.getMemberRoles();
+
+        return new UniversalResponse(new Response(200,rolesList.size()+" roles found"),
+                rolesList);
+    }
+
+
 }

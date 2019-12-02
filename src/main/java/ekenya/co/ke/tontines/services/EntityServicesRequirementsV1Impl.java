@@ -99,6 +99,11 @@ public class EntityServicesRequirementsV1Impl implements EntityServicesRequireme
     }
 
     @Override
+    public List<Otp> findOtp(String otpValue, Members members) {
+        return otpRepository.findAllByOtpValueAndMembers(otpValue, members);
+    }
+
+    @Override
     public List<Members> findMember(long id) {
       List<Members> membersList = membersRepository.findAllById(id);
 

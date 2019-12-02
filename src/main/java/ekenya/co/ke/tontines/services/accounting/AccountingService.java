@@ -38,6 +38,9 @@ public interface AccountingService {
     ExternalAccountDetailsWrapper recordExternalAccount(RecordBalance recordBalance, String Amount);
 
     void createWalletServices(ServicesWrapper servicesWrapper);
+
+    void initiateLedgerTransactionLog(AccountNumber creditAccount,AccountNumber debitAccount,
+                                      TransactionsLog transactionsLog,String amount);
 //    UniversalResponseWrapper createHoldingAccountsConfiguration(List<HoldingAccounts> holdingAccounts);
 //
 //    void initiateLedgerOperationForCreditAccounts(String tableName, long uniqueId, String narration,

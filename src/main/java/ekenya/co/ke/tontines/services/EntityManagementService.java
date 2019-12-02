@@ -1,9 +1,7 @@
 package ekenya.co.ke.tontines.services;
 
 import ekenya.co.ke.tontines.dao.entitites.*;
-import ekenya.co.ke.tontines.dao.wrappers.GroupMembersDetails;
-import ekenya.co.ke.tontines.dao.wrappers.PasswordUpdater;
-import ekenya.co.ke.tontines.dao.wrappers.UniversalResponse;
+import ekenya.co.ke.tontines.dao.wrappers.*;
 import ekenya.co.ke.tontines.dao.wrappers.membergroups.CreateMemberGroupWrapper;
 import ekenya.co.ke.tontines.dao.wrappers.membergroups.LeaveGroupWrapper;
 import ekenya.co.ke.tontines.dao.wrappers.membergroups.MemberDetails;
@@ -16,6 +14,9 @@ public interface EntityManagementService {
     UniversalResponse UPDATE_MEMBER_PASSWORD(PasswordUpdater passwordUpdater);
     UniversalResponse UPDATE_MEMBER(Members members);
     UniversalResponse GET_MEMBER_DETAILS(long id);
+    UniversalResponse VERIFY_OTP(VerifyOtpWrapper verifyOtpWrapper);
+
+    Members getMemberDetails(String phoneNumber);
 
     UniversalResponse CREATE_MEMBERGROUP(CreateMemberGroupWrapper createMemberGroupWrapper);
 
@@ -23,7 +24,7 @@ public interface EntityManagementService {
     List<Members> createUnregisteredMembers(List<MemberDetails> memberDetails);
     List<GroupMembersDetails> getGroupMemberDetails(List<Members> memberDetails);
 
-    void LINK_MEMBER_TO_GROUP(Members members, MemberGroups  memberGroups);
+    void LINK_MEMBER_TO_GROUP(Members members, MemberGroups  memberGroups,boolean isCreator);
 
     UniversalResponse GET_MEMBER_GROUP(long id);
 
@@ -40,4 +41,7 @@ public interface EntityManagementService {
     UniversalResponse GET_GROUP_CONTRIBUTIONS(long id,int page,int size);
 
     UniversalResponse MEMBER_LEAVE_GROUP(LeaveGroupWrapper leaveGroupWrapper);
+
+    UniversalResponse GET_GROUP_ROLES();
+
 }

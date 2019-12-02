@@ -32,7 +32,7 @@ public class Members extends BaseEntity {
     private String Nationality;
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
-  //  @JsonSerialize(as = Region.class)
+    //  @JsonSerialize(as = Region.class)
     @JoinColumn(name = "department", nullable = false)
     @JsonProperty("department")
     private Department department;

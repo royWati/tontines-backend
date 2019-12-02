@@ -6,6 +6,8 @@ import ekenya.co.ke.tontines.dao.entitites.portal.SystemUsers;
 import ekenya.co.ke.tontines.dao.wrappers.Response;
 import ekenya.co.ke.tontines.dao.wrappers.UniversalResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,5 +46,25 @@ public class AccessControlServiceImpl implements AccessControlService {
     public UniversalResponse ADD_ROLES_TO_SYSTEM_USER(List<Roles> rolesList, long id) {
         return new UniversalResponse(new Response(200,"privileges added successfully"),
                 accessControlRequirementService.addRolesToSystemUser(rolesList, id));
+    }
+
+    @Override
+    public UniversalResponse VIEW_PRIVILEGES() {
+        return new UniversalResponse(new Response(200,"all privileges retrived successfully"),
+                accessControlRequirementService.getPrivileges());
+    }
+
+    @Override
+    public UniversalResponse VIEW_ROLES() {
+        return new UniversalResponse(new Response(200,"all privileges retrived successfully"),
+                accessControlRequirementService.getAllRoles());
+    }
+
+    @Override
+    public UniversalResponse VIEW_SYSTEM_USERS(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        return new UniversalResponse(new Response(200,"system users retrieved successfully"),
+                accessControlRequirementService.getSystemUsers(pageable));
     }
 }

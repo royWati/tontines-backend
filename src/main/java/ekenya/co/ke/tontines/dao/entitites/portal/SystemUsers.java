@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -18,11 +20,14 @@ import java.util.List;
 @Table(name = "system_users_tbl")
 public class SystemUsers extends BaseEntity {
 
-    private String username;
+    private String firstName;
     private String email;
     private String password;
+    private String lastName;
+    private String phoneNumber;
 
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(

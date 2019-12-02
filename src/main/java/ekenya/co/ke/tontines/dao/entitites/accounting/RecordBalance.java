@@ -28,5 +28,12 @@ public class RecordBalance extends BaseEntity {
     @JoinColumn(name = "member_group", nullable = false)
     @JsonProperty("memberGroup")
     private MemberGroups memberGroup;
+    @ManyToOne()
+    @JsonBackReference
+    @JoinColumn(name = "account_type", nullable = false)
+    @JsonProperty("accountType")
+    private ExternalAccountTypes accountTypes;
+
+
 
 }

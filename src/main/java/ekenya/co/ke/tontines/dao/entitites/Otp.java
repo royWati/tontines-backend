@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.lang.reflect.Member;
+import java.util.Random;
 
 @Getter
 @Setter
@@ -27,8 +28,11 @@ public class Otp extends BaseEntity{
 
     @PrePersist
     public void generateOtp(){
-        long number = (long) ((Math.random()) * 750000000);
-        otpValue  = String.valueOf(number);
+        Random r = new Random();
+        int low = 1000;
+        int high = 9999;
+        int result = r.nextInt(high-low) + low;
+        otpValue  = String.valueOf(result);
 
     }
 }

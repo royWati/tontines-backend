@@ -1,13 +1,15 @@
 package ekenya.co.ke.tontines.services;
 
 import ekenya.co.ke.tontines.dao.entitites.*;
-import ekenya.co.ke.tontines.dao.repositories.ContributionsRepository;
-import ekenya.co.ke.tontines.dao.repositories.MemberAndGroupLinkRepository;
-import ekenya.co.ke.tontines.dao.repositories.MemberGroupsRepository;
+import ekenya.co.ke.tontines.dao.entitites.accounting.ExternalAccountTypes;
+import ekenya.co.ke.tontines.dao.repositories.*;
+import ekenya.co.ke.tontines.dao.repositories.accounting.ExternalAccountTypesRepository;
 import ekenya.co.ke.tontines.dao.repositories.appconfigs.ContributionTypesRepository;
 import ekenya.co.ke.tontines.dao.repositories.appconfigs.GroupTypesRepository;
 import ekenya.co.ke.tontines.dao.repositories.appconfigs.IndivualContributionsRepository;
 import ekenya.co.ke.tontines.dao.repositories.appconfigs.ScheduleTypesRepository;
+import ekenya.co.ke.tontines.dao.repositories.jpql.GetGroupStatements;
+import ekenya.co.ke.tontines.dao.repositories.jpql.ViewMemberGroups;
 import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,6 +42,12 @@ public class EntityServicesRequirementsV2Impl implements EntityServicesRequireme
     @Autowired
     private MemberAndGroupLinkRepository memberAndGroupLinkRepository;
 
+    @Autowired private ContributionLogRepository contributionLogRepository;
+
+    @Autowired private MemberRolesRepository memberRolesRepository;
+
+    @Autowired private DocumentsLibraryRepository documentsLibraryRepository;
+    @Autowired private ExternalAccountTypesRepository externalAccountTypesRepository;
     @Override
     public List<ScheduleTypes> getAllScheduleTypes() {
         return scheduleTypesRepository.findAll();
@@ -106,6 +114,11 @@ public class EntityServicesRequirementsV2Impl implements EntityServicesRequireme
     }
 
     @Override
+    public List<Contributions> getContributionById(long id) {
+        return contributionsRepository.findAllByIdAndSoftDelete(id,false);
+    }
+
+    @Override
     public Page<Contributions> getAllContributions(Pageable pageable) {
         return contributionsRepository.findAllBySoftDelete(false,pageable);
     }
@@ -126,9 +139,51 @@ public class EntityServicesRequirementsV2Impl implements EntityServicesRequireme
     }
 
     @Override
+    public Page<ViewMemberGroups> getMemberGroupsForMember(long id,Pageable pageable) {
+        Members m = new Members();
+        m.setId(id);
+        return memberAndGroupLinkRepository.loadMemberGroupsForMember(m,pageable);
+    }
+
+    @Override
+    public Page<ViewMemberGroups> getMemberGroupsForMemberInvites(long id, Pageable pageable) {
+        Members m = new Members();
+        m.setId(id);
+        return memberAndGroupLinkRepository.loadMemberGroupsForMemberInvites(m,pageable);
+    }
+
+    @Override
     public List<MemberAndGroupLink> findMemberGroupAndMemberLink(MemberGroups memberGroups, Members members) {
         return memberAndGroupLinkRepository.findAllByMemberGroupAndMemberAndSoftDelete(memberGroups, members,false);
     }
 
+    @Override
+    public ContributionsLog addContributionLog(ContributionsLog contributionsLog) {
+        return contributionLogRepository.save(contributionsLog);
+    }
 
+    @Override
+    public Page<ContributionsLog> getContributionsLogs(Contributions id, Pageable pageable) {
+        return contributionLogRepository.findAllByContribution(id, pageable);
+    }
+
+    @Override
+    public Page<GetGroupStatements> getGroupContributions(long id, Pageable pageable) {
+        return contributionLogRepository.getGroupStatements(id, pageable);
+    }
+
+    @Override
+    public List<MemberRoles> getMemberRoles() {
+        return memberRolesRepository.findAll();
+    }
+
+    @Override
+    public DocumentsLibrary createDocumentDirectory(DocumentsLibrary documentsLibrary) {
+        return documentsLibraryRepository.save(documentsLibrary);
+    }
+
+    @Override
+    public List<ExternalAccountTypes> getExternalAccountTypes() {
+        return externalAccountTypesRepository.findAll();
+    }
 }

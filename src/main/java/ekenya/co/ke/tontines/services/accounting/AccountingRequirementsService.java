@@ -1,7 +1,9 @@
 package ekenya.co.ke.tontines.services.accounting;
 
 
+import ekenya.co.ke.tontines.dao.entitites.MemberGroups;
 import ekenya.co.ke.tontines.dao.entitites.accounting.*;
+import ekenya.co.ke.tontines.dao.repositories.jpql.GetExternalGroupAccounts;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -103,5 +105,6 @@ public interface AccountingRequirementsService {
 
     RecordBalance createRecordBalance(RecordBalance recordBalance);
 
-
+    Page<GetExternalGroupAccounts> getExternalGroupAccounts(MemberGroups memberGroupId,
+                                                            ExternalAccountTypes accountType, Pageable pageable);
 }

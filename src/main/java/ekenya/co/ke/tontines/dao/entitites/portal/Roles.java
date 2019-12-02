@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -19,12 +21,12 @@ import java.util.List;
 @Table(name = "roles_tbl")
 public class Roles extends BaseEntity {
     private String roleName;
+
     @JsonBackReference
     @ManyToMany(mappedBy = "roles")
     private Collection<SystemUsers> systemUsers;
-
-
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
     @JoinTable(
             name = "role_preveleges_tbl",
             joinColumns = @JoinColumn(

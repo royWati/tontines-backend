@@ -6,9 +6,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface ContributionsRepository extends JpaRepository<Contributions,Long> {
 
 
     Page<Contributions> findAllByMemberGroupAndSoftDelete(MemberGroups memberGroups,boolean state,Pageable pageable);
     Page<Contributions> findAllBySoftDelete(boolean state, Pageable pageable);
+    List<Contributions> findAllByIdAndSoftDelete(long id , boolean state);
 }

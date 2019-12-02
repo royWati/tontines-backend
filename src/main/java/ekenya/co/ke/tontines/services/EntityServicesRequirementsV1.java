@@ -25,5 +25,7 @@ public interface EntityServicesRequirementsV1 {
 
     List<MemberGroupDetails> createMemberGroup(String s);
 
+    List<Otp> findOtp(String otpValue , Members members);
+
     List<Members> findMember(long id);
 }

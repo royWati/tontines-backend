@@ -408,5 +408,18 @@ public class AccountingServiceImpl implements AccountingService {
 
     }
 
+    @Override
+    public void initiateLedgerTransactionLog(AccountNumber creditAccount,
+                                             AccountNumber debitAccount,
+                                             TransactionsLog transactionsLog,String amount) {
+
+        TransactionTypes debitTransaction = accountingRequirementsService.getTransactionTypeById(1).get(0);
+        TransactionTypes creditTransaction = accountingRequirementsService.getTransactionTypeById(2).get(0);
+
+        updateGeneralLedger(debitAccount,transactionsLog,amount,debitTransaction);
+        updateGeneralLedger(creditAccount,transactionsLog,amount,creditTransaction);
+
+    }
+
 
 }

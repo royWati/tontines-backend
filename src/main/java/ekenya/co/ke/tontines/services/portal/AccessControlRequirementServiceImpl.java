@@ -7,6 +7,8 @@ import ekenya.co.ke.tontines.dao.repositories.portal.PrivilegesRepository;
 import ekenya.co.ke.tontines.dao.repositories.portal.RolesRepository;
 import ekenya.co.ke.tontines.dao.repositories.portal.SystemUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -32,6 +34,16 @@ public class AccessControlRequirementServiceImpl implements AccessControlRequire
     @Override
     public Roles createRole(Roles roles) {
         return rolesRepository.save(roles);
+    }
+
+    @Override
+    public List<Privileges> getPrivileges() {
+        return privilegesRepository.findAll();
+    }
+
+    @Override
+    public List<Roles> getAllRoles() {
+        return rolesRepository.findAll();
     }
 
     @Override
@@ -64,5 +76,10 @@ public class AccessControlRequirementServiceImpl implements AccessControlRequire
         su.setRoles(rolesCollection);
 
         return systemUserRepository.save(su);
+    }
+
+    @Override
+    public Page<SystemUsers> getSystemUsers(Pageable pageable) {
+        return systemUserRepository.findAllBySoftDelete(false,pageable);
     }
 }

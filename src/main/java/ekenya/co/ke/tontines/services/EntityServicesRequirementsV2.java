@@ -1,6 +1,9 @@
 package ekenya.co.ke.tontines.services;
 
 import ekenya.co.ke.tontines.dao.entitites.*;
+import ekenya.co.ke.tontines.dao.entitites.accounting.ExternalAccountTypes;
+import ekenya.co.ke.tontines.dao.repositories.jpql.GetGroupStatements;
+import ekenya.co.ke.tontines.dao.repositories.jpql.ViewMemberGroups;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -32,12 +35,25 @@ public interface EntityServicesRequirementsV2 {
     List<MemberGroups> findMemberGroups(long id);
 
     Contributions createContribution(Contributions contributions);
+    List<Contributions> getContributionById(long id);
     Page<Contributions> getAllContributions(Pageable pageable);
     Page<Contributions> getAllContributions(MemberGroups memberGroups,Pageable pageable);
 
     MemberAndGroupLink addMemberGroupLink(MemberAndGroupLink  memberAndGroupLink);
     Page<MemberAndGroupLink> getAllMembersInGroup(MemberGroups memberGroups ,Pageable pageable);
+    Page<ViewMemberGroups> getMemberGroupsForMember(long id,Pageable pageable);
+    Page<ViewMemberGroups> getMemberGroupsForMemberInvites(long id,Pageable pageable);
 
 
     List<MemberAndGroupLink> findMemberGroupAndMemberLink(MemberGroups memberGroups,Members members);
+
+    ContributionsLog addContributionLog(ContributionsLog contributionsLog);
+    Page<ContributionsLog> getContributionsLogs(Contributions id, Pageable pageable);
+    Page<GetGroupStatements> getGroupContributions(long id,Pageable pageable);
+
+    List<MemberRoles> getMemberRoles();
+
+    DocumentsLibrary createDocumentDirectory(DocumentsLibrary documentsLibrary);
+
+    List<ExternalAccountTypes> getExternalAccountTypes();
 }

@@ -13,9 +13,13 @@ public class TontinesApplicationTests {
     public void contextLoads() {
 
         BCryptPasswordEncoder b = new BCryptPasswordEncoder();
-        String pas = b.encode("cupcake");
+        String pas = b.encode("fep@2019");
 
         System.out.println(pas);
+
+        if (b.matches("cupcake",pas)){
+            System.out.println("found...");
+        }
     }
 
 }

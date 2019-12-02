@@ -15,4 +15,5 @@ public class RecordBalanceWrapper {
     private String accountNumber;
     private long groupId;
     private String amount;
+    private long externalAccountTypeId;
 }

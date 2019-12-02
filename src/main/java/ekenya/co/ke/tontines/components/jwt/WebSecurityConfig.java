@@ -57,9 +57,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers(
                         "/mobile/authenticate",
                                     "/mobile/member",
+                                    "/mobile/member/verify-otp",
                                     "/mobile/config/**",
                                     "/mobile/member/update-password",
-                                    "/portal/access/authenticate").permitAll().
+                                    "/portal/access/authenticate",
+                                    "/portal/access/create/system-user").permitAll().
 // all other requests need to be authenticated
         anyRequest().authenticated().and().
 // make sure we use stateless session; session won't be used to
