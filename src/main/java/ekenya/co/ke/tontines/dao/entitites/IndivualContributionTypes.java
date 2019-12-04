@@ -15,6 +15,5 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "individual_types_tbl")
 public class IndivualContributionTypes extends BaseEntity {
-
     private String name;
 }

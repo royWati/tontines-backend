@@ -6,4 +6,5 @@ import ekenya.co.ke.tontines.dao.wrappers.UniversalResponse;
 public interface DataServices {
 
     UniversalResponse ADD_CONTRIBUTION_SOURCES(ContributionSources contributionSources);
+    UniversalResponse GET_CONTRIBUTION_SOURCES();
 }

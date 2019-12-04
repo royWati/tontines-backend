@@ -44,4 +44,6 @@ public interface EntityManagementService {
 
     UniversalResponse GET_GROUP_ROLES();
 
+    UniversalResponse GET_ALL_MEMBER_GROUPS(int page , int size);
+
 }

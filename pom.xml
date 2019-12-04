@@ -10,7 +10,7 @@
     </parent>
     <groupId>ekenya.co.ke</groupId>
     <artifactId>tontines</artifactId>
-    <version>v1.0.1</version>
+    <version>v1.0.2</version>
     <name>tontines</name>
     <description>demo proposal for BOK</description>
 

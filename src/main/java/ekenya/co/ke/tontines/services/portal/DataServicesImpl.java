@@ -15,4 +15,10 @@ public class DataServicesImpl implements DataServices {
         return new UniversalResponse(new Response(200,"Contribution sources added successfully"),
                 dataRequirementsService.addCotnributionSource(contributionSources));
     }
+
+    @Override
+    public UniversalResponse GET_CONTRIBUTION_SOURCES() {
+        return new UniversalResponse(new Response(200,"contriution sources " +
+                "retrived successfully"),dataRequirementsService.getCotnributionSource());
+    }
 }

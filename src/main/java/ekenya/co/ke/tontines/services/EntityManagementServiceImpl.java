@@ -455,5 +455,16 @@ public class EntityManagementServiceImpl implements EntityManagementService {
                 rolesList);
     }
 
+    @Override
+    public UniversalResponse GET_ALL_MEMBER_GROUPS(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<MemberGroups> memberGroupsPage = entityServicesRequirementsV2.getAllMemberGroups(pageable);
+
+        String message = memberGroupsPage.getTotalElements()+" results found";
+
+
+        return new UniversalResponse(new Response(200,message),memberGroupsPage);
+    }
+
 
 }

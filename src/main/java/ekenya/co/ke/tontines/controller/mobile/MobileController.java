@@ -135,7 +135,6 @@ public class MobileController {
 
     @PostMapping("/group/members")
     public Object findGroupMembers(@RequestBody StatementGetWrapper wrapper){
-
         return entityManagementService.GET_ALL_MEMBERS_IN_GROUP(wrapper.getId(), wrapper.getPage(),
                 wrapper.getSize());
     }

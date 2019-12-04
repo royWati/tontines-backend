@@ -16,4 +16,5 @@ import javax.persistence.Table;
 @Table(name = "schedule_types_tbl")
 public class ScheduleTypes extends BaseEntity {
     private String name;
+    private long frequencyOfPayment;
 }
