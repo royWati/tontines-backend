@@ -9,6 +9,9 @@ import ekenya.co.ke.tontines.dao.wrappers.*;
 import ekenya.co.ke.tontines.dao.wrappers.accoutingdao.RecordBalanceWrapper;
 import ekenya.co.ke.tontines.dao.wrappers.membergroups.*;
 import ekenya.co.ke.tontines.services.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +34,7 @@ import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/mobile")
+@ApiOperation(authorizations = {@Authorization(value = "Bearer ")},value = "all the endpoints are currently protected")
 public class MobileController {
 
     private final static Logger logger = Logger.getLogger(MobileController.class.getName());
@@ -49,6 +53,7 @@ public class MobileController {
     @Autowired
     private JwtUserDetailsService userDetailsService;
 
+
     @PostMapping("/member")
     public Object addMember(@RequestBody Members members){
         return entityManagementService.CREATE_MEMBER(members);
@@ -65,8 +70,12 @@ public class MobileController {
     public Object verifyOtp(@RequestBody VerifyOtpWrapper wrapper){
         return entityManagementService.VERIFY_OTP(wrapper);
     }
+
+    @ApiOperation(value = "This endpoint is used to login the member to the mobile application" +
+            "")
     @PostMapping("/authenticate")
-    public Object authenticateUserDetails(@RequestBody JwtRequest jwtRequest) throws Exception {
+    public Object authenticateUserDetails(@RequestBody @ApiParam(value = "username is the" +
+            "phone number") JwtRequest jwtRequest) throws Exception {
 
         authenticate(jwtRequest.getUsername(), jwtRequest.getPassword());
         final UserDetails userDetails = userDetailsService
@@ -101,6 +110,7 @@ public class MobileController {
     public Object getAllGroupsForMember(@RequestBody StatementGetWrapper statementGetWrapper){
         return entityManagementServiceV2.GET_GROUP_FOR_MEMBER(statementGetWrapper);
     }
+
     @PostMapping("/member/groups/invites")
     public Object getAllGroupsForMemberInvites(@RequestBody StatementGetWrapper statementGetWrapper){
         return entityManagementServiceV2.GET_GROUP_FOR_MEMBER_INVITES(statementGetWrapper);
@@ -161,6 +171,7 @@ public class MobileController {
     public Object uploadGroupDocuments(@RequestParam("files")MultipartFile[] files ,
                                        @RequestParam("groupId")String id, HttpServletRequest request){
 
+        logger.info("/group/upload-documents request got here...");
         logger.info(request.getRequestURI());
         logger.info(request.getContentType());
         logger.info("group id --"+id);

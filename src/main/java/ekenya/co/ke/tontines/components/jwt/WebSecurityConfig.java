@@ -61,6 +61,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                     "/mobile/config/**",
                                     "/mobile/member/update-password",
                                     "/portal/access/authenticate",
+                                    "/swagger*/**",
+                                    "/webjars/**",
+                                    "/v2/api-docs",
                                     "/portal/access/create/system-user").permitAll().
 // all other requests need to be authenticated
         anyRequest().authenticated().and().
