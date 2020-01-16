@@ -41,7 +41,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             jwtToken = requestTokenHeader.substring(7);
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-
             } catch (IllegalArgumentException e) {
                 System.out.println("Unable to get JWT Token");
             } catch (ExpiredJwtException e) {
@@ -54,9 +53,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = null;
             try {
+
+                logger.info("checking authentification from phone number...."+username);
                 userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
             }catch (UsernameNotFoundException e){
-                userDetails = this.portalAuthentification.loadUserByUsername(username);
+                e.printStackTrace();
+                //userDetails = this.portalAuthentification.loadUserByUsername(username);
             }
 
 // if token is valid configure Spring Security to manually set

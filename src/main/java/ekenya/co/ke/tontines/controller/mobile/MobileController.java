@@ -52,8 +52,6 @@ public class MobileController {
 
     @Autowired
     private JwtUserDetailsService userDetailsService;
-
-
     @PostMapping("/member")
     public Object addMember(@RequestBody Members members){
         return entityManagementService.CREATE_MEMBER(members);
@@ -74,9 +72,9 @@ public class MobileController {
     @ApiOperation(value = "This endpoint is used to login the member to the mobile application" +
             "")
     @PostMapping("/authenticate")
-    public Object authenticateUserDetails(@RequestBody @ApiParam(value = "username is the" +
-            "phone number") JwtRequest jwtRequest) throws Exception {
+    public Object authenticateUserDetails(@RequestBody  JwtRequest jwtRequest) throws Exception {
 
+        logger.info("username ..."+jwtRequest.getUsername());
         authenticate(jwtRequest.getUsername(), jwtRequest.getPassword());
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(jwtRequest.getUsername());
@@ -131,6 +129,11 @@ public class MobileController {
         return entityManagementServiceV2.ACCEPT_GROUP_INVITE(inviteWrapper);
     }
 
+    @PostMapping("/member/groups/send-invites")
+    public Object sendExistingGroupInvites(@RequestBody CreateMemberGroupWrapper wrapper){
+        return entityManagementService.SEND_NEW_INVITES(wrapper);
+    }
+
 
 
     @PostMapping("/group/create")
@@ -138,9 +141,9 @@ public class MobileController {
         return entityManagementService.CREATE_MEMBERGROUP(createMemberGroupWrapper);
     }
 
-    @PostMapping("/group/{id}")
-    public Object findMemberGroup(@PathVariable long id){
-        return entityManagementService.VIEW_MEMBER_GROUP(id);
+    @PostMapping("/group")
+    public Object findMemberGroup(@RequestBody StatementGetWrapper statementGetWrapper){
+        return entityManagementService.VIEW_MEMBER_GROUP(statementGetWrapper.getId());
     }
 
     @PostMapping("/group/members")
@@ -157,9 +160,9 @@ public class MobileController {
     public Object createContribution(@RequestBody Contributions contributions){
         return entityManagementService.CREATE_CONTRIBUTION_GROUP(contributions);
     }
-    @PostMapping("/group/contributions/{id}")
-    public Object getGroupContributions(@PathVariable long id,@RequestParam int page, @RequestParam int size){
-        return entityManagementService.GET_GROUP_CONTRIBUTIONS(id, page, size);
+    @PostMapping("/group/contributions")
+    public Object getGroupContributions(@RequestBody StatementGetWrapper wrapper){
+        return entityManagementService.GET_GROUP_CONTRIBUTIONS(wrapper.getId(), wrapper.getPage(), wrapper.getSize());
     }
 
     @PostMapping("group/leave-group")
@@ -230,6 +233,24 @@ public class MobileController {
     @PostMapping("/contribution/make-contribution")
     public Object makeContribution(@RequestBody ContributionsLog contributionsLog){
         return entityManagementServiceV2.MAKE_CONTRIBUTION(contributionsLog);
+    }
+    @PostMapping("/contribution")
+    public Object getContributionInformation(@RequestBody StatementGetWrapper statementGetWrapper){
+        return entityManagementServiceV2.GET_CONTRIBUTION_INFROMATION(statementGetWrapper.getId());
+    }
+
+    @PostMapping("/contribution/member-statements")
+    public Object getTotalContributionsPerMember(@RequestBody StatementGetWrapper statementGetWrapper){
+        return entityManagementServiceV2.GET_CUMILATIVE_CONTRIBUTION_PER_MEMBER(
+                statementGetWrapper.getId(),statementGetWrapper.getPage(),statementGetWrapper.getSize()
+        );
+    }
+
+    @PostMapping("/contribution/member-log")
+    public Object getMemberContributionLog(@RequestBody StatementGetWrapper statementGetWrapper){
+
+        return entityManagementServiceV2.GET_MEMBER_CONTRIBUTION_LOG(statementGetWrapper.getId(),
+                statementGetWrapper.getContributionId(),statementGetWrapper.getPage(),statementGetWrapper.getSize());
     }
 
     @PostMapping("/contributions/statements")

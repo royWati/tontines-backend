@@ -6,11 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ViewMemberGroups {
     private MemberGroups memberGroups;
-    private boolean inviteAccepted;
+    private Boolean inviteAccepted;
+//    private NoOfParticipant participants;
 }

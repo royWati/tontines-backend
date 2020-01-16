@@ -2,9 +2,7 @@ package ekenya.co.ke.tontines.services;
 
 import ekenya.co.ke.tontines.dao.entitites.*;
 import ekenya.co.ke.tontines.dao.entitites.accounting.*;
-import ekenya.co.ke.tontines.dao.repositories.jpql.GetExternalGroupAccounts;
-import ekenya.co.ke.tontines.dao.repositories.jpql.GetGroupStatements;
-import ekenya.co.ke.tontines.dao.repositories.jpql.ViewMemberGroups;
+import ekenya.co.ke.tontines.dao.repositories.jpql.*;
 import ekenya.co.ke.tontines.dao.wrappers.Response;
 import ekenya.co.ke.tontines.dao.wrappers.StatementGetWrapper;
 import ekenya.co.ke.tontines.dao.wrappers.UniversalResponse;
@@ -21,13 +19,13 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Part;
 import java.io.*;
-import java.lang.reflect.Member;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -114,7 +112,7 @@ public class EntityManagementServiceV2Impl implements EntityManagementServiceV2 
                     AccountBalances accountBalances = accountingService.geAccountBalance(accountNumber);
 
                     if (Integer.parseInt(accountBalances.getActualBalance()) >=
-                            Integer.parseInt(contributionsLog.getAmount())){
+                            contributionsLog.getAmount()){
 
                         ContributionsLog createdLog = entityServicesRequirementsV2.
                                 addContributionLog(contributionsLog);
@@ -129,7 +127,7 @@ public class EntityManagementServiceV2Impl implements EntityManagementServiceV2 
                                 groupAccount.get(0),
                                 accountNumber,
                                 transactionsLog,
-                                contributionsLog.getAmount()
+                                String.valueOf(contributionsLog.getAmount())
                         );
 
 
@@ -160,7 +158,7 @@ public class EntityManagementServiceV2Impl implements EntityManagementServiceV2 
     @Override
     public UniversalResponse GET_CONTRIBUTION_STATEMENTS(StatementGetWrapper wrapper) {
 
-        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize());
+        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize(), Sort.Direction.DESC);
 
         List<Contributions> contributions = entityServicesRequirementsV2.getContributionById(wrapper.getId());
 
@@ -179,7 +177,7 @@ public class EntityManagementServiceV2Impl implements EntityManagementServiceV2 
     @Override
     public UniversalResponse GET_GROUP_STATEMENTS(StatementGetWrapper wrapper) {
 
-        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize());
+        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize(), Sort.Direction.DESC);
         long groupId = wrapper.getId();
 
         Page<GetGroupStatements> statementsPage = entityServicesRequirementsV2.getGroupContributions(groupId,
@@ -193,7 +191,7 @@ public class EntityManagementServiceV2Impl implements EntityManagementServiceV2 
     @Override
     public UniversalResponse GET_GROUP_FOR_MEMBER(StatementGetWrapper wrapper) {
 
-        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize());
+        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize(), Sort.Direction.DESC);
         long id = wrapper.getId();
         Page<ViewMemberGroups> viewMemberGroups = entityServicesRequirementsV2.getMemberGroupsForMember(id,
                 pageable);
@@ -204,7 +202,7 @@ public class EntityManagementServiceV2Impl implements EntityManagementServiceV2 
 
     @Override
     public UniversalResponse GET_GROUP_FOR_MEMBER_INVITES(StatementGetWrapper wrapper) {
-        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize());
+        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize(), Sort.Direction.DESC);
         long id = wrapper.getId();
         Page<ViewMemberGroups> viewMemberGroups = entityServicesRequirementsV2.getMemberGroupsForMemberInvites(id,
                 pageable);
@@ -376,7 +374,7 @@ public class EntityManagementServiceV2Impl implements EntityManagementServiceV2 
 
         long memberGroupid = wrapper.getId();
         long accountType = wrapper.getAccountTypeId();
-        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize());
+        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize(), Sort.Direction.DESC);
 
         MemberGroups m = new MemberGroups();
         m.setId(memberGroupid);
@@ -386,5 +384,45 @@ public class EntityManagementServiceV2Impl implements EntityManagementServiceV2 
                 accountingRequirementsService.getExternalGroupAccounts(m,e,pageable);
 
         return new UniversalResponse(new Response(),getExternalGroupAccountsPage) ;
+    }
+
+    @Override
+    public UniversalResponse GET_CONTRIBUTION_INFROMATION(long id) {
+        List<Contributions> list = entityServicesRequirementsV2.getContributionById(id);
+
+        if (list.size() ==0) return new UniversalResponse(new Response(404,"contribution not found"),
+                null);
+        else
+        return new UniversalResponse(new Response(),list.get(0));
+    }
+
+    @Override
+    public UniversalResponse GET_CUMILATIVE_CONTRIBUTION_PER_MEMBER(long contributionId, int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC);
+
+        Contributions contributions = new Contributions();
+        contributions.setId(contributionId);
+
+        Page<CumilativeContributionLogPerMember> logPerMemberPage =
+                entityServicesRequirementsV2.getCumilativeContributionPerMember(contributions,pageable);
+
+        String message = logPerMemberPage.getTotalElements()+" results found";
+
+        return new UniversalResponse(new Response(200,message),logPerMemberPage);
+    }
+
+    @Override
+    public UniversalResponse GET_MEMBER_CONTRIBUTION_LOG(int id, int contributionId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC);
+        Contributions contributions = new Contributions();
+        contributions.setId(contributionId);
+        Members members = new Members();
+        members.setId(id);
+
+        Page<MemberContributionLog> logPage=
+                entityServicesRequirementsV2.getMemberContributionLog(members,contributions,pageable);
+
+        return null;
     }
 }

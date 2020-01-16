@@ -17,9 +17,13 @@ public interface MemberAndGroupLinkRepository extends JpaRepository<MemberAndGro
 
     String strLoadMemberGroupsForMember =
             "SELECT NEW ekenya.co.ke.tontines.dao.repositories.jpql.ViewMemberGroups(" +
-                    "mgl.memberGroup," +
+                    "mgl.memberGroup as mg_select," +
                     "mgl.hasAcceptedInvite" +
-                    ") FROM MemberAndGroupLink mgl WHERE mgl.member = :id and mgl.softDelete = false ";
+              //      "(SELECT NEW ekenya.co.ke.tontines.dao.repositories.jpql.ViewMemberGroups." +
+           //         "NoOfParticipant(COUNT(mgl_1.id) from MemberAndGroupLink mgl_1  " +
+         //           "WHERE mgl_1.memberGroup = mg_select)) as totalParti" +
+                    ") " +
+                    "FROM MemberAndGroupLink mgl WHERE mgl.member = :id and mgl.softDelete = false ";
 
     String strLoadMemberGroupsForMemberInvites =
             "SELECT NEW ekenya.co.ke.tontines.dao.repositories.jpql.ViewMemberGroups(" +

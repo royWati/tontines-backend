@@ -23,13 +23,14 @@ public class MemberAndGroupLink extends BaseEntity{
     @JsonProperty("memberGroup")
     private MemberGroups memberGroup;
     @ManyToOne()
-    @JoinColumn(name = "member", nullable = false)
+    @JoinColumn(name = "member_id", nullable = false)
     @JsonProperty("member")
     private Members member;
     private boolean hasAcceptedInvite;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_role",nullable = false)
+    @JsonProperty("memberRole")
     private MemberRoles memberRole;
 
     private boolean declinedInvite;

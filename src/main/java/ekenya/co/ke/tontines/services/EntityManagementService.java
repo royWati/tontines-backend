@@ -5,6 +5,7 @@ import ekenya.co.ke.tontines.dao.wrappers.*;
 import ekenya.co.ke.tontines.dao.wrappers.membergroups.CreateMemberGroupWrapper;
 import ekenya.co.ke.tontines.dao.wrappers.membergroups.LeaveGroupWrapper;
 import ekenya.co.ke.tontines.dao.wrappers.membergroups.MemberDetails;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -20,6 +21,8 @@ public interface EntityManagementService {
 
     UniversalResponse CREATE_MEMBERGROUP(CreateMemberGroupWrapper createMemberGroupWrapper);
 
+    UniversalResponse SEND_NEW_INVITES(CreateMemberGroupWrapper createMemberGroupWrapper);
+
     Members createUnregisteredMembers(MemberDetails memberDetails);
     List<Members> createUnregisteredMembers(List<MemberDetails> memberDetails);
     List<GroupMembersDetails> getGroupMemberDetails(List<Members> memberDetails);
@@ -33,6 +36,7 @@ public interface EntityManagementService {
     void SEND_OTP(Otp otp);
 
     UniversalResponse GET_ALL_MEMBERS_IN_GROUP(long id,int page, int size);
+    UniversalResponse GET_ALL_MEMBERS_IN_GROUP(MemberGroups memberGroups, Pageable pageable);
 
     UniversalResponse ADD_NEW_GROUP_MEMBER(List<MemberDetails> memberDetails,long id);
 

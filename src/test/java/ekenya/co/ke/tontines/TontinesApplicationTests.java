@@ -22,4 +22,12 @@ public class TontinesApplicationTests {
         }
     }
 
+    @Test
+    public void testElvis(){
+
+        String s = null;
+
+    }
+
+
 }

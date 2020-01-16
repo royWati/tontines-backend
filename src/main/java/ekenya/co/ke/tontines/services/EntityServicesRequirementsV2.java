@@ -2,8 +2,8 @@ package ekenya.co.ke.tontines.services;
 
 import ekenya.co.ke.tontines.dao.entitites.*;
 import ekenya.co.ke.tontines.dao.entitites.accounting.ExternalAccountTypes;
-import ekenya.co.ke.tontines.dao.repositories.jpql.GetGroupStatements;
-import ekenya.co.ke.tontines.dao.repositories.jpql.ViewMemberGroups;
+import ekenya.co.ke.tontines.dao.repositories.jpql.*;
+import ekenya.co.ke.tontines.dao.wrappers.UniversalResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -56,4 +56,12 @@ public interface EntityServicesRequirementsV2 {
     DocumentsLibrary createDocumentDirectory(DocumentsLibrary documentsLibrary);
 
     List<ExternalAccountTypes> getExternalAccountTypes();
+
+    Page<ViewMembersAnTotalContributionsPerGroup> getGroupMembers(MemberGroups memberGroups,Pageable pageable);
+
+    Page<CumilativeContributionLogPerMember> getCumilativeContributionPerMember(Contributions contributions,
+                                                                                Pageable pageable);
+
+
+    Page<MemberContributionLog> getMemberContributionLog(Members members, Contributions contributions, Pageable pageable);
 }

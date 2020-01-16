@@ -59,9 +59,12 @@ public class EntityServicesRequirementsV1Impl implements EntityServicesRequireme
 
     @Override
     public List<Members> searchPhoneNumber(String phoneNumber) {
-
-
         return membersRepository.searchPhoneNumber(phoneNumber);
+    }
+
+    @Override
+    public List<Members> searchIdentification(String identification) {
+        return membersRepository.findAllByIdentification(identification);
     }
 
     @Override

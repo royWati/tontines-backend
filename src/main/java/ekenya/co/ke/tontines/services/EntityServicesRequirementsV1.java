@@ -19,6 +19,7 @@ public interface EntityServicesRequirementsV1 {
     List<Region> findAllDepartments();
 
     List<Members> searchPhoneNumber(String phoneNumber);
+    List<Members> searchIdentification(String identification);
 
     Members createMember(Members members);
     Otp generateOtp(Otp otp);

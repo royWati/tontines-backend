@@ -3,20 +3,27 @@ package ekenya.co.ke.tontines.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ekenya.co.ke.tontines.dao.entitites.*;
+import ekenya.co.ke.tontines.dao.entitites.accounting.AccountBalances;
 import ekenya.co.ke.tontines.dao.entitites.accounting.AccountNumber;
 import ekenya.co.ke.tontines.dao.entitites.accounting.AccountType;
+import ekenya.co.ke.tontines.dao.repositories.jpql.ViewMembersAnTotalContributionsPerGroup;
 import ekenya.co.ke.tontines.dao.wrappers.*;
 import ekenya.co.ke.tontines.dao.wrappers.membergroups.CreateMemberGroupWrapper;
 import ekenya.co.ke.tontines.dao.wrappers.membergroups.LeaveGroupWrapper;
 import ekenya.co.ke.tontines.dao.wrappers.membergroups.MemberDetails;
 import ekenya.co.ke.tontines.services.accounting.AccountingService;
 import ekenya.co.ke.tontines.services.accounting.AccountingServiceImpl;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.catalina.LifecycleState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.Member;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -54,37 +62,85 @@ public class EntityManagementServiceImpl implements EntityManagementService {
     @Override
     public UniversalResponse CREATE_MEMBER(Members members) {
 
-        List<MemberGroupDetails> memberGroup = new ArrayList<>();
-        String strMemberGroups = objectMapperConverter(memberGroup);
 
-        members.setMemberGroups(strMemberGroups);
-        members.setRegisteredMember(true);
-        members.setMemberGroups("[]");
-        Members createdMember = entityServicesRequirementsV1.createMember(members);
+        // verification for id, phone number
+
+        // TODO CHECK IF THE MEMBER WAS SENT AN INVITE, IF SO, REGISTER THEM AFRESH
+        // TODO THIS MEANS SETTING UP A FLAG OF UNREGISTERED MEMBER IN THE APPLICATION
 
 
+        if (members.getPhoneNumber() == null || members.getIdentification()==null){
+            return new UniversalResponse(new Response(403,"missing phone number or identification" +
+                    "number"));
+        }else{
+            String phone_number = members.getPhoneNumber();
 
-        Otp otp = new Otp();
-        otp.setMembers(createdMember);
-        otp.setOtpType("REGISTRATION");
-        Otp createdOtp = entityServicesRequirementsV1.generateOtp(otp);
-        SEND_OTP(createdOtp);
+            List<Members> findMembers = entityServicesRequirementsV1.searchPhoneNumber(phone_number);
 
-  //      System.out.println(createdMember.getRegion().getName());
+            int flag_registration =0 ; // check if the registration took place or not
 
-        Response response = new Response(200,"member created successfully. OTP has been sent " +
-                "to the provided phone number");
+            Members createdMember = new Members();
+            if (findMembers.size() > 0 ){ // check if the phone number is already registered
 
+                Members m = findMembers.get(0);
 
-        // create account number
-        AccountType accountType = accountingService.findAccountType("MA").get(0);
+                // check if there is a pending registration
 
-        AccountNumber accountNumber = accountingService.createAccountNumber(createdMember.getId(),
-                Members.class.getSimpleName(),accountType);
+                if (!m.isRegisteredMember()){ // update this information
+                    members.setId(m.getId());
+                    members.setCreatedOn(LocalDateTime.now());
+                    members.setPendingRegistrationStatus(true);
+                    members.setRegisteredMember(true);
 
-        logger.info("account number created successsfully..."+accountNumber.getId());
+                    // updating the current information of the member...
+                    createdMember = entityServicesRequirementsV1.createMember(members);
 
-        return new UniversalResponse(response,createdMember);
+                }else{
+                    // throw an error notifying the member that an account is registered with that name
+                    flag_registration = 1;
+                }
+
+            }else{
+                List<MemberGroupDetails> memberGroup = new ArrayList<>();
+                String strMemberGroups = objectMapperConverter(memberGroup);
+
+                members.setMemberGroups(strMemberGroups);
+                members.setRegisteredMember(true);
+                members.setMemberGroups("[]");
+                createdMember = entityServicesRequirementsV1.createMember(members);
+
+            }
+
+            Response response = new Response();
+
+            if (flag_registration == 0){
+                Otp otp = new Otp();
+                otp.setMembers(createdMember);
+                otp.setOtpType("REGISTRATION");
+                Otp createdOtp = entityServicesRequirementsV1.generateOtp(otp);
+                SEND_OTP(createdOtp);
+
+                //      System.out.println(createdMember.getRegion().getName());
+
+                response.setMessage("member created successfully. OTP has been sent " +
+                        "to the provided phone number");
+                response.setStatus(200);
+
+                // create account number for the wallet
+                AccountType accountType = accountingService.findAccountType("MA").get(0);
+
+                AccountNumber accountNumber = accountingService.createAccountNumber(createdMember.getId(),
+                        Members.class.getSimpleName(),accountType);
+
+                logger.info("account number created successsfully..."+accountNumber.getId());
+
+            }else{
+                response.setMessage("A member with a similar phone number already exists in the system");
+                response.setStatus(403);
+            }
+            return new UniversalResponse(response,createdMember);
+        }
+
     }
 
     @Override
@@ -182,9 +238,7 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 
         MemberGroups mg = entityServicesRequirementsV2.createMemberGroup(memberGroups);
 
-        membersList.forEach(members -> {
-            LINK_MEMBER_TO_GROUP(members,mg,false);
-        });
+        membersList.forEach(members -> LINK_MEMBER_TO_GROUP(members,mg,false));
 
         // add creator to link
         Members creator = createMemberGroupWrapper.getMemberGroups().getCreator();
@@ -194,6 +248,24 @@ public class EntityManagementServiceImpl implements EntityManagementService {
         AccountType type = accountingService.findAccountType("CA").get(0);
         accountingService.createAccountNumber(mg.getId(),MemberGroups.class.getSimpleName(),type);
 
+
+        return new UniversalResponse(new Response(200,"Group members created successfully"),
+                mg);
+    }
+
+    @Override
+    public UniversalResponse SEND_NEW_INVITES(CreateMemberGroupWrapper
+                                               createMemberGroupWrapper) {
+
+        // create unregistered members
+        List<Members> membersList =createUnregisteredMembers(createMemberGroupWrapper.getMemberDetails());
+
+        // add them to the member group list table
+        List<GroupMembersDetails> groupMembersDetailsList = getGroupMemberDetails(membersList);
+
+        MemberGroups mg = createMemberGroupWrapper.getMemberGroups();
+
+        membersList.forEach(members -> LINK_MEMBER_TO_GROUP(members,mg,false));
 
         return new UniversalResponse(new Response(200,"Group members created successfully"),
                 mg);
@@ -295,12 +367,30 @@ public class EntityManagementServiceImpl implements EntityManagementService {
         List<MemberGroups> list = entityServicesRequirementsV2.findMemberGroups(id);
 
         if (list.size() > 0){
+            // find account number
+            List<AccountNumber> accountNumbers = accountingService.findAccountNumber(id,
+                    MemberGroups.class.getSimpleName());
+
+            AccountBalances accountBalances = accountingService.geAccountBalance(accountNumbers.get(0));
+
+            GroupDetails groupDetails = new GroupDetails(list.get(0),accountBalances);
+
+            // add account balance
             return new UniversalResponse(new Response(200,"member group retrieved successfully"),
-                    list.get(0));
+                    groupDetails);
         }else{
             return new UniversalResponse(new Response(404,"member group not found"));
         }
 
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    class GroupDetails{
+        private MemberGroups groupDetails;
+        private AccountBalances accountBalance;
     }
 
     @Override
@@ -347,11 +437,17 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 
             MemberGroups memberGroups = list.get(0);
 
-            Pageable pageable = PageRequest.of(page, size);
+            Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC);
 
-            Page<MemberAndGroupLink> memberAndGroupLinkList = entityServicesRequirementsV2.getAllMembersInGroup(
+//            Page<MemberAndGroupLink> memberAndGroupLinkList = entityServicesRequirementsV2.getAllMembersInGroup(
+//                    memberGroups,pageable
+//            );
+            Page<ViewMembersAnTotalContributionsPerGroup> memberAndGroupLinkList =
+                    entityServicesRequirementsV2.getGroupMembers(
                     memberGroups,pageable
             );
+
+
 
             return new UniversalResponse(new Response(200,"members found"),memberAndGroupLinkList);
 
@@ -359,6 +455,11 @@ public class EntityManagementServiceImpl implements EntityManagementService {
             return new UniversalResponse(new Response(404,"member group not found"),list);
         }
 
+    }
+
+    @Override
+    public UniversalResponse GET_ALL_MEMBERS_IN_GROUP(MemberGroups memberGroups, Pageable pageable) {
+        return null;
     }
 
     @Override
@@ -394,7 +495,7 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 
         if (list.size() > 0 ){
 
-            Pageable p = PageRequest.of(page, size);
+            Pageable p = PageRequest.of(page, size, Sort.Direction.DESC);
             MemberGroups m = list.get(0);
             Page<Contributions> contributionsPage = entityServicesRequirementsV2.getAllContributions(m,p);
 
@@ -457,7 +558,7 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 
     @Override
     public UniversalResponse GET_ALL_MEMBER_GROUPS(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC);
         Page<MemberGroups> memberGroupsPage = entityServicesRequirementsV2.getAllMemberGroups(pageable);
 
         String message = memberGroupsPage.getTotalElements()+" results found";

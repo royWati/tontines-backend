@@ -10,9 +10,9 @@
     </parent>
     <groupId>ekenya.co.ke</groupId>
     <artifactId>tontines</artifactId>
-    <version>v1.0.3</version>
+    <version>v1.1.1</version>
     <name>tontines</name>
-    <description>demo proposal for BOK</description>
+    <description>update for upload documents</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -31,7 +31,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -53,7 +52,6 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -73,7 +71,6 @@
             <artifactId>hibernate-types-52</artifactId>
             <version>2.7.0</version>
         </dependency>
-
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>

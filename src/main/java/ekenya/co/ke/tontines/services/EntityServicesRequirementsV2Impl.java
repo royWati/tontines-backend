@@ -8,8 +8,8 @@ import ekenya.co.ke.tontines.dao.repositories.appconfigs.ContributionTypesReposi
 import ekenya.co.ke.tontines.dao.repositories.appconfigs.GroupTypesRepository;
 import ekenya.co.ke.tontines.dao.repositories.appconfigs.IndivualContributionsRepository;
 import ekenya.co.ke.tontines.dao.repositories.appconfigs.ScheduleTypesRepository;
-import ekenya.co.ke.tontines.dao.repositories.jpql.GetGroupStatements;
-import ekenya.co.ke.tontines.dao.repositories.jpql.ViewMemberGroups;
+import ekenya.co.ke.tontines.dao.repositories.jpql.*;
+import ekenya.co.ke.tontines.dao.wrappers.UniversalResponse;
 import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -115,7 +115,8 @@ public class EntityServicesRequirementsV2Impl implements EntityServicesRequireme
 
     @Override
     public List<Contributions> getContributionById(long id) {
-        return contributionsRepository.findAllByIdAndSoftDelete(id,false);
+        List<Contributions> list =  contributionsRepository.findAllByIdAndSoftDelete(id,false);
+        return list.size() > 0 ? list : new ArrayList<>();
     }
 
     @Override
@@ -185,5 +186,21 @@ public class EntityServicesRequirementsV2Impl implements EntityServicesRequireme
     @Override
     public List<ExternalAccountTypes> getExternalAccountTypes() {
         return externalAccountTypesRepository.findAll();
+    }
+
+    @Override
+    public Page<ViewMembersAnTotalContributionsPerGroup> getGroupMembers(MemberGroups memberGroups,
+                                                                         Pageable pageable) {
+        return contributionLogRepository.getGroupMembersAndTotalContributions(memberGroups,pageable);
+    }
+
+    @Override
+    public Page<CumilativeContributionLogPerMember> getCumilativeContributionPerMember(Contributions contributions, Pageable pageable) {
+        return contributionLogRepository.getCumilativeContributionPerMember(contributions,pageable);
+    }
+
+    @Override
+    public Page<MemberContributionLog> getMemberContributionLog(Members members, Contributions contributions, Pageable pageable) {
+        return contributionLogRepository.getMemberContributionLog(members, contributions, pageable);
     }
 }

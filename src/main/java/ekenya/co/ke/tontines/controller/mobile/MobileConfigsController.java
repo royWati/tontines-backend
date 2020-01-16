@@ -21,7 +21,7 @@ public class MobileConfigsController {
     public Object getCountries(){
         return  configService.GET_COUNTRIES();
     }
-    @PostMapping("/get-senegal-regions")
+    @PostMapping("/get-regions")
     public Object getSenegalRegions(){
         return  configService.GET_SENEGAL_REGIONS();
     }

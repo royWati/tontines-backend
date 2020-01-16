@@ -28,6 +28,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         List<GrantedAuthority> authorities;
+        System.out.println("phone number for testing..."+s);
         List<Members> membersList = membersRepository.findAllByPhoneNumber(s);
 
         if (membersList.size() > 0 ){

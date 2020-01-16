@@ -22,7 +22,7 @@ import javax.persistence.Table;
 public class ContributionsLog extends BaseEntity{
 
     @ManyToOne()
-    @JoinColumn(name = "member", nullable = false)
+    @JoinColumn(name = "member_id", nullable = false)
     @JsonMerge
     @JsonProperty("member")
     private Members member;
@@ -32,7 +32,7 @@ public class ContributionsLog extends BaseEntity{
     @JsonProperty("contribution_id")
     @JsonBackReference
     private Contributions contribution;
-    private String amount;
+    private long amount;
     @ManyToOne()
     @JoinColumn(name = "contribution_source", nullable = false)
     @JsonMerge

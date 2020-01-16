@@ -16,11 +16,11 @@ import java.util.Random;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "otp_tbl")
+@Table(name = "one_time_password")
 public class Otp extends BaseEntity{
     private String otpValue;
-    @ManyToOne(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
-    @JoinColumn(name = "member", nullable = false)
+    @ManyToOne()
+    @JoinColumn(name = "member_id", nullable = false)
     @JsonMerge
     @JsonProperty("member")
     private Members members;

@@ -7,6 +7,7 @@ import ekenya.co.ke.tontines.dao.entitites.portal.SystemUsers;
 import ekenya.co.ke.tontines.dao.repositories.portal.SystemUserRepository;
 import ekenya.co.ke.tontines.dao.wrappers.JwtRequest;
 import ekenya.co.ke.tontines.dao.wrappers.JwtResponse;
+import ekenya.co.ke.tontines.dao.wrappers.StatementGetWrapper;
 import ekenya.co.ke.tontines.services.portal.AccessControlService;
 import ekenya.co.ke.tontines.services.portal.PortalAuthentification;
 import lombok.AllArgsConstructor;
@@ -93,13 +94,11 @@ public class PortalController {
     public Object addUserRoles(@RequestBody List<Roles> roles, @PathVariable long id){
         return accessControlService.ADD_ROLES_TO_SYSTEM_USER(roles,id);
     }
-
     // create privilege
     @PostMapping("/create/privilege")
     public Object createPrivilege(@RequestBody Privileges privileges){
         return accessControlService.CREATE_PRIVILEGE(privileges);
     }
-
     @PostMapping("/view/privileges")
     public Object viewPrivileges(){
         return accessControlService.VIEW_PRIVILEGES();
@@ -109,9 +108,9 @@ public class PortalController {
         return accessControlService.VIEW_ROLES();
     }
     @PostMapping("/view/system-users")
-    public Object viewSystemUsers(@RequestParam int page , @RequestParam int size){
+    public Object viewSystemUsers(@RequestBody StatementGetWrapper wrapper){
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(wrapper.getPage(), wrapper.getSize());
 
         Page<SystemUsers> systemUsersPage = systemUserRepository.findAllBySoftDelete(false,pageable);
       //  return accessControlService.VIEW_SYSTEM_USERS(page,size);
@@ -123,7 +122,6 @@ public class PortalController {
     public Object addPrivilegeToRole(@RequestBody List<Privileges> privileges,@PathVariable long id){
         return accessControlService.ADD_PRIVILEGE_TO_ROLE(privileges,id);
     }
-
     // create role
     @PostMapping("/create/role")
     public Object createRole(@RequestBody Roles roles){

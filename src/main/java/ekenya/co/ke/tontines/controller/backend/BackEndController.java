@@ -19,8 +19,6 @@ public class BackEndController {
     @Autowired
     EntityManagementServiceV2 entityManagementServiceV2;
 
-
-
     @PostMapping("/add-contribution-source")
     public Object addContributionSource(@RequestBody ContributionSources contributionSources){
         return dataServices.ADD_CONTRIBUTION_SOURCES(contributionSources);
@@ -48,6 +46,4 @@ public class BackEndController {
     public Object viewContributionContributionStatements(@RequestBody StatementGetWrapper wrapper){
         return entityManagementServiceV2.GET_GROUP_STATEMENTS(wrapper);
     }
-
-
 }

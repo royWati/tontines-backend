@@ -37,4 +37,10 @@ public interface EntityManagementServiceV2 {
     UniversalResponse GET_EXTERNAL_ACCOUNT_TYPES();
 
     UniversalResponse GET_GROUP_EXTERNAL_ACCOUNTS(StatementGetWrapper wrapper);
+
+    UniversalResponse GET_CONTRIBUTION_INFROMATION(long id);
+
+    UniversalResponse GET_CUMILATIVE_CONTRIBUTION_PER_MEMBER(long contributionId,int page,int size);
+
+    UniversalResponse GET_MEMBER_CONTRIBUTION_LOG(int id, int contributionId, int page, int size);
 }
