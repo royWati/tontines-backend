@@ -30,7 +30,7 @@ public interface MemberAndGroupLinkRepository extends JpaRepository<MemberAndGro
                     "mgl.memberGroup," +
                     "mgl.hasAcceptedInvite" +
                     ") FROM MemberAndGroupLink mgl WHERE mgl.member = :id and mgl.softDelete = false " +
-                    "and mgl.hasAcceptedInvite = false ";
+                    "and mgl.hasAcceptedInvite = false and mgl.declinedInvite = false ";
 
     Page<MemberAndGroupLink> findAllByMemberGroupAndSoftDelete(MemberGroups memberGroups, Pageable pageable,
                                                                boolean state);
