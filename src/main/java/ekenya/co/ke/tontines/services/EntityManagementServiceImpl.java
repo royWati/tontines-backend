@@ -242,6 +242,7 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 
         // add creator to link
         Members creator = createMemberGroupWrapper.getMemberGroups().getCreator();
+
         LINK_MEMBER_TO_GROUP(creator,mg,true);
 
 
@@ -347,7 +348,15 @@ public class EntityManagementServiceImpl implements EntityManagementService {
             memberAndGroupLink.setMemberRole(roles);
         }
 
-        entityServicesRequirementsV2.addMemberGroupLink(memberAndGroupLink);
+
+        //validate if the member has the invite sent or not to avoid duplicates
+
+        if(entityServicesRequirementsV2.findMemberGroupAndMemberLink(
+                memberGroups,members).size() ==0){
+            entityServicesRequirementsV2.addMemberGroupLink(memberAndGroupLink);
+        }
+
+
     }
 
     @Override
@@ -437,7 +446,7 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 
             MemberGroups memberGroups = list.get(0);
 
-            Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC);
+            Pageable pageable = PageRequest.of(page, size);
 
 //            Page<MemberAndGroupLink> memberAndGroupLinkList = entityServicesRequirementsV2.getAllMembersInGroup(
 //                    memberGroups,pageable
@@ -495,7 +504,7 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 
         if (list.size() > 0 ){
 
-            Pageable p = PageRequest.of(page, size, Sort.Direction.DESC);
+            Pageable p = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC,"id"));
             MemberGroups m = list.get(0);
             Page<Contributions> contributionsPage = entityServicesRequirementsV2.getAllContributions(m,p);
 
@@ -558,7 +567,7 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 
     @Override
     public UniversalResponse GET_ALL_MEMBER_GROUPS(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC,"id"));
         Page<MemberGroups> memberGroupsPage = entityServicesRequirementsV2.getAllMemberGroups(pageable);
 
         String message = memberGroupsPage.getTotalElements()+" results found";

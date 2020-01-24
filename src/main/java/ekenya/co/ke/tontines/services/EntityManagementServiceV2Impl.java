@@ -158,7 +158,7 @@ public class EntityManagementServiceV2Impl implements EntityManagementServiceV2 
     @Override
     public UniversalResponse GET_CONTRIBUTION_STATEMENTS(StatementGetWrapper wrapper) {
 
-        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize(), Sort.Direction.DESC);
+        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize(), Sort.by(Sort.Direction.DESC,"id"));
 
         List<Contributions> contributions = entityServicesRequirementsV2.getContributionById(wrapper.getId());
 
@@ -177,7 +177,7 @@ public class EntityManagementServiceV2Impl implements EntityManagementServiceV2 
     @Override
     public UniversalResponse GET_GROUP_STATEMENTS(StatementGetWrapper wrapper) {
 
-        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize(), Sort.Direction.DESC);
+        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize(), Sort.by(Sort.Direction.DESC,"id"));
         long groupId = wrapper.getId();
 
         Page<GetGroupStatements> statementsPage = entityServicesRequirementsV2.getGroupContributions(groupId,
@@ -191,7 +191,8 @@ public class EntityManagementServiceV2Impl implements EntityManagementServiceV2 
     @Override
     public UniversalResponse GET_GROUP_FOR_MEMBER(StatementGetWrapper wrapper) {
 
-        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize(), Sort.Direction.DESC);
+        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize(),
+                Sort.by(Sort.Direction.DESC,"id"));
         long id = wrapper.getId();
         Page<ViewMemberGroups> viewMemberGroups = entityServicesRequirementsV2.getMemberGroupsForMember(id,
                 pageable);
@@ -202,7 +203,7 @@ public class EntityManagementServiceV2Impl implements EntityManagementServiceV2 
 
     @Override
     public UniversalResponse GET_GROUP_FOR_MEMBER_INVITES(StatementGetWrapper wrapper) {
-        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize(), Sort.Direction.DESC);
+        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize(), Sort.by(Sort.Direction.DESC,"id"));
         long id = wrapper.getId();
         Page<ViewMemberGroups> viewMemberGroups = entityServicesRequirementsV2.getMemberGroupsForMemberInvites(id,
                 pageable);
@@ -374,7 +375,7 @@ public class EntityManagementServiceV2Impl implements EntityManagementServiceV2 
 
         long memberGroupid = wrapper.getId();
         long accountType = wrapper.getAccountTypeId();
-        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize(), Sort.Direction.DESC);
+        Pageable pageable = PageRequest.of(wrapper.getPage(),wrapper.getSize(), Sort.by(Sort.Direction.DESC,"id"));
 
         MemberGroups m = new MemberGroups();
         m.setId(memberGroupid);
@@ -399,7 +400,7 @@ public class EntityManagementServiceV2Impl implements EntityManagementServiceV2 
     @Override
     public UniversalResponse GET_CUMILATIVE_CONTRIBUTION_PER_MEMBER(long contributionId, int page, int size) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC,"id"));
 
         Contributions contributions = new Contributions();
         contributions.setId(contributionId);
@@ -414,7 +415,7 @@ public class EntityManagementServiceV2Impl implements EntityManagementServiceV2 
 
     @Override
     public UniversalResponse GET_MEMBER_CONTRIBUTION_LOG(int id, int contributionId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC,"id"));
         Contributions contributions = new Contributions();
         contributions.setId(contributionId);
         Members members = new Members();

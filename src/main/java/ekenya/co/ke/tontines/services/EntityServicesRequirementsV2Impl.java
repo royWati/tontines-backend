@@ -131,6 +131,8 @@ public class EntityServicesRequirementsV2Impl implements EntityServicesRequireme
 
     @Override
     public MemberAndGroupLink addMemberGroupLink(MemberAndGroupLink memberAndGroupLink) {
+
+
         return memberAndGroupLinkRepository.save(memberAndGroupLink);
     }
 
@@ -151,6 +153,11 @@ public class EntityServicesRequirementsV2Impl implements EntityServicesRequireme
         Members m = new Members();
         m.setId(id);
         return memberAndGroupLinkRepository.loadMemberGroupsForMemberInvites(m,pageable);
+    }
+
+    @Override
+    public List<MemberAndGroupLink> checkMemberInvite(MemberGroups memberGroups, Members members) {
+        return null;
     }
 
     @Override

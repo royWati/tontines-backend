@@ -17,6 +17,8 @@ public class MobileConfigsController {
     @Autowired
     private ConfigService configService;
 
+    @Autowired
+
     @PostMapping("/get-countries")
     public Object getCountries(){
         return  configService.GET_COUNTRIES();
@@ -45,4 +47,6 @@ public class MobileConfigsController {
     public Object getIndivualContributionTypes(){
         return  new ModelAndView("redirect:/portal/config/indiviual-contribution/types");
     }
+
+
 }

@@ -45,6 +45,9 @@ public interface EntityServicesRequirementsV2 {
     Page<ViewMemberGroups> getMemberGroupsForMemberInvites(long id,Pageable pageable);
 
 
+    List<MemberAndGroupLink> checkMemberInvite(MemberGroups memberGroups,Members members);
+
+
     List<MemberAndGroupLink> findMemberGroupAndMemberLink(MemberGroups memberGroups,Members members);
 
     ContributionsLog addContributionLog(ContributionsLog contributionsLog);
@@ -57,7 +60,8 @@ public interface EntityServicesRequirementsV2 {
 
     List<ExternalAccountTypes> getExternalAccountTypes();
 
-    Page<ViewMembersAnTotalContributionsPerGroup> getGroupMembers(MemberGroups memberGroups,Pageable pageable);
+    Page<ViewMembersAnTotalContributionsPerGroup>
+    getGroupMembers(MemberGroups memberGroups,Pageable pageable);
 
     Page<CumilativeContributionLogPerMember> getCumilativeContributionPerMember(Contributions contributions,
                                                                                 Pageable pageable);
