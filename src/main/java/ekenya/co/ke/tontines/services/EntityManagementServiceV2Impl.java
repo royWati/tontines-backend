@@ -321,7 +321,6 @@ public class EntityManagementServiceV2Impl implements EntityManagementServiceV2 
     public UniversalResponse UPLOAD_GROUP_DOCUMENTS(List<Part> parts, long id) {
         List<DocumentsLibrary> fileNames = new ArrayList<>();
         for (Part p : parts){
-
             try {
 
                 String[] files = p.getSubmittedFileName().split(".");

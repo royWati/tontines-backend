@@ -35,8 +35,6 @@ public class AccountingConfiguration {
 
     public static void ConfigureAccountingSystem(){
         Gson gson = new Gson();
-
-
         InputStream is = null;
         try {
             logger.info(AccountsConfig);
